@@ -8,14 +8,50 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-// Define country data
+// Define country data with proper flag emojis and icons
 const countries = [
-  { code: 'sa', name: 'Saudi Arabia', available: true, flag: 'https://images.unsplash.com/photo-1586724237569-f3d0c1dee8c6?w=20&h=20&fit=crop' },
-  { code: 'ae', name: 'UAE', available: false, flag: 'https://images.unsplash.com/flagged/photo-1559717865-a99cac1c95d8?w=20&h=20&fit=crop' },
-  { code: 'qa', name: 'Qatar', available: false, flag: 'https://images.unsplash.com/photo-1507904139316-3c7422a97a49?w=20&h=20&fit=crop' },
-  { code: 'kw', name: 'Kuwait', available: false, flag: null },
-  { code: 'bh', name: 'Bahrain', available: false, flag: null },
-  { code: 'om', name: 'Oman', available: false, flag: null },
+  { 
+    code: 'sa', 
+    name: 'Saudi Arabia', 
+    available: true, 
+    flag: 'https://flagcdn.com/sa.svg',
+    emoji: '🇸🇦'
+  },
+  { 
+    code: 'ae', 
+    name: 'UAE', 
+    available: false, 
+    flag: 'https://flagcdn.com/ae.svg',
+    emoji: '🇦🇪'
+  },
+  { 
+    code: 'qa', 
+    name: 'Qatar', 
+    available: false, 
+    flag: 'https://flagcdn.com/qa.svg',
+    emoji: '🇶🇦'
+  },
+  { 
+    code: 'kw', 
+    name: 'Kuwait', 
+    available: false, 
+    flag: 'https://flagcdn.com/kw.svg',
+    emoji: '🇰🇼'
+  },
+  { 
+    code: 'bh', 
+    name: 'Bahrain', 
+    available: false, 
+    flag: 'https://flagcdn.com/bh.svg',
+    emoji: '🇧🇭'
+  },
+  { 
+    code: 'om', 
+    name: 'Oman', 
+    available: false, 
+    flag: 'https://flagcdn.com/om.svg',
+    emoji: '🇴🇲'
+  },
 ];
 
 interface CountrySelectorProps {
@@ -35,31 +71,49 @@ const CountrySelector: React.FC<CountrySelectorProps> = ({ className }) => {
   
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className={`flex items-center space-x-1 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-md text-sm font-medium ${className}`}>
-        {displayCountry.flag ? (
-          <img src={displayCountry.flag} alt={`${displayCountry.name} flag`} className="w-5 h-5 rounded-sm" />
-        ) : (
-          <i className="fas fa-flag text-gray-400 w-5 h-5 flex items-center justify-center"></i>
-        )}
-        <span className="uppercase">{displayCountry.code}</span>
-        <i className="fas fa-chevron-down text-xs"></i>
+      <DropdownMenuTrigger className={`flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 px-3 py-2 rounded-md text-sm font-medium shadow-sm transition-colors ${className}`}>
+        <div className="flex items-center justify-center w-6 h-6 overflow-hidden rounded-md shadow-sm bg-white">
+          {displayCountry.flag ? (
+            <img 
+              src={displayCountry.flag} 
+              alt={`${displayCountry.name} flag`} 
+              className="w-full h-full object-cover" 
+              loading="eager"
+            />
+          ) : (
+            displayCountry.emoji
+          )}
+        </div>
+        <span className="uppercase font-semibold">{displayCountry.code}</span>
+        <i className="fas fa-chevron-down text-xs text-gray-500"></i>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
+      <DropdownMenuContent align="end" className="w-56 p-1 border border-gray-200 shadow-lg rounded-lg">
         {countries.map((country) => (
           <DropdownMenuItem key={country.code} asChild>
-            <Link href={`/${country.code}`} className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-              {country.flag ? (
-                <img src={country.flag} alt={`${country.name} flag`} className="w-5 h-5 rounded-sm mr-2" />
-              ) : (
-                <i className="fas fa-flag text-gray-400 mr-2"></i>
-              )}
-              <span className="flex-1">{country.name}</span>
+            <Link 
+              href={`/${country.code}`} 
+              className="flex items-center px-3 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-md transition-colors"
+            >
+              <div className="flex-shrink-0 w-7 h-5 overflow-hidden rounded mr-3 shadow-sm bg-white">
+                {country.flag ? (
+                  <img 
+                    src={country.flag} 
+                    alt={`${country.name} flag`} 
+                    className="w-full h-full object-cover" 
+                    loading="lazy"
+                  />
+                ) : (
+                  <span className="text-base">{country.emoji}</span>
+                )}
+              </div>
+              <span className="flex-1 font-medium">{country.name}</span>
               {country.available ? (
-                <span className="text-xs text-success-500 font-medium flex items-center">
+                <span className="text-xs bg-success-100 text-success-700 px-2 py-0.5 rounded-full font-medium ml-2">
                   <i className="fas fa-check-circle mr-1"></i>
+                  {t('common.available')}
                 </span>
               ) : (
-                <span className="text-xs text-gray-500">
+                <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full font-medium ml-2">
                   {t('common.comingSoon')}
                 </span>
               )}
