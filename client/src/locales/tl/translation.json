@@ -1,0 +1,225 @@
+{
+  "common": {
+    "loading": "Naglo-load...",
+    "error": "May naganap na error. Pakisubukang muli.",
+    "tryAgain": "Subukang Muli",
+    "free": "Libre",
+    "available": "Available",
+    "comingSoon": "Malapit Na",
+    "submitting": "Nagsusumite..."
+  },
+  "seo": {
+    "home": {
+      "title": "Gulf Rate - Pinakamahusay na Exchange Rate para sa mga OFW sa Gulf Countries",
+      "description": "Ihambing ang real-time na exchange rate mula sa 10 mapagkakatiwalaang provider sa Saudi Arabia. Hanapin ang pinakamahusay na rate para sa international money transfer."
+    },
+    "country": {
+      "title": "{{country}} Exchange Rate | Gulf Rate",
+      "description": "Ihambing ang pinakamahusay na exchange rate at mga serbisyo ng money transfer sa {{country}}. Makatipid sa iyong international remittance sa Gulf Rate."
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "providers": "Mga Provider",
+    "compare": "Ihambing ang Rate",
+    "alerts": "Rate Alert",
+    "contact": "Makipag-ugnayan"
+  },
+  "hero": {
+    "title": "Pinakamahusay na Exchange Rate para sa mga OFW sa Saudi Arabia",
+    "subtitle": "Ihambing ang real-time na exchange rate mula sa 10 mapagkakatiwalaang provider. Makatipid sa iyong international money transfer.",
+    "cta": {
+      "compare": "Ihambing ang Rate Ngayon",
+      "alerts": "Kumuha ng Rate Alert"
+    }
+  },
+  "quickSearch": {
+    "from": "Mula",
+    "to": "Papunta",
+    "button": "Hanapin ang Pinakamahusay na Rate"
+  },
+  "benefits": {
+    "title": "Bakit Gagamitin ang Gulf Rate?",
+    "subtitle": "Tinutulungan namin ang mga OFW na humanap ng pinakamahusay na exchange rate at makatipid sa international transfer.",
+    "cards": [
+      {
+        "title": "Real-Time Rate",
+        "description": "Ihambing ang napapanahong exchange rate mula sa 10 mapagkakatiwalaang Saudi provider sa iisang lugar."
+      },
+      {
+        "title": "Makatipid",
+        "description": "Hanapin ang pinakamahusay na rate at pinakamababang bayad para sa maximum na money transfer pabalik sa iyong bansa."
+      },
+      {
+        "title": "Rate Alert",
+        "description": "Mag-set ng alert para sa iyong target na exchange rate at maabisuhan kapag available na ito."
+      }
+    ]
+  },
+  "rateTable": {
+    "title": "{{country}} Exchange Rate",
+    "subtitle": "Ihambing ang pinakabagong exchange rate mula sa nangungunang provider",
+    "lastUpdated": "Huling na-update",
+    "sortBy": "I-sort ayon sa",
+    "for": "Para sa",
+    "transfer": "I-transfer",
+    "viewMore": "Tingnan Lahat ng {{count}} Provider",
+    "viewLess": "Tingnan ang Mas Kaunti",
+    "filter": {
+      "amount": "Halaga",
+      "currency": "Target na Currency",
+      "selectCurrency": "Pumili ng currency",
+      "button": "I-update ang Resulta"
+    },
+    "columns": {
+      "provider": "Provider",
+      "rate": "Rate",
+      "youGet": "Makukuha Mo",
+      "fees": "Bayad",
+      "transferTime": "Oras ng Transfer",
+      "rating": "Rating"
+    },
+    "sortOptions": {
+      "bestRate": "Pinakamahusay na Rate",
+      "lowestFees": "Pinakamababang Bayad",
+      "userRating": "Rating ng User"
+    }
+  },
+  "providers": {
+    "title": "Aming Mapagkakatiwalaang Exchange Provider",
+    "subtitle": "Nakikipag-partner kami sa pinakamapagkakatiwalaang money transfer service sa Saudi Arabia"
+  },
+  "alerts": {
+    "title": "Maabisuhan Tungkol sa Pinakamahusay na Exchange Rate",
+    "subtitle": "Mag-sign up para sa rate alert at aabisuhan ka namin kapag umabot ang exchange rate sa iyong target"
+  },
+  "countries": {
+    "title": "Available sa Gulf Countries",
+    "subtitle": "Ang Gulf Rate ay lumalawak sa buong GCC region para magbigay ng pinakamahusay na exchange rate para sa mga OFW",
+    "sa": "Saudi Arabia",
+    "ae": "United Arab Emirates",
+    "qa": "Qatar",
+    "kw": "Kuwait",
+    "bh": "Bahrain",
+    "om": "Oman"
+  },
+  "faq": {
+    "title": "Mga Madalas Itanong",
+    "subtitle": "Lahat ng kailangan mong malaman tungkol sa Gulf Rate at foreign exchange sa Saudi Arabia",
+    "items": [
+      {
+        "question": "Gaano kadalas na-update ang exchange rate?",
+        "answer": "Ina-update ng Gulf Rate ang exchange rate mula sa lahat ng provider nang ilang beses sa isang araw. Karamihan sa rate ay nire-refresh kada 1-3 oras sa oras ng trabaho. Ang eksaktong oras ng huling update ay ipinapakita kasama ng bawat rate sa comparison table."
+      },
+      {
+        "question": "Ang Gulf Rate ba ay isang money transfer service?",
+        "answer": "Hindi, ang Gulf Rate ay isang comparison platform. Tinutulungan ka naming humanap ng pinakamahusay na exchange rate at transfer service, pero hindi kami mismo ang nagpoproseso ng transfer. Kapag nakahanap ka na ng provider na may magandang rate, ire-redirect ka sa kanilang opisyal na website para makumpleto ang iyong transaksyon."
+      },
+      {
+        "question": "Paano gumagana ang rate alert?",
+        "answer": "Kapag nag-sign up ka para sa rate alert, maaari mong tukuyin ang iyong target na exchange rate. Kapag ang alinman sa aming provider ay nag-alok ng rate na tumutugma o lumampas sa iyong target, magpapadala kami sa iyo ng agarang notification sa pamamagitan ng email o SMS para makapakinabang ka sa magandang rate."
+      },
+      {
+        "question": "Anong mga currency ang sinusuportahan ng Gulf Rate?",
+        "answer": "Sa kasalukuyan, nakatuon kami sa pinakamadalas na corridor para sa mga OFW sa Saudi Arabia, kabilang ang Saudi Riyal (SAR) papuntang Indian Rupee (INR), Pakistani Rupee (PKR), Philippine Peso (PHP), Bangladeshi Taka (BDT), Nepalese Rupee (NPR), Egyptian Pound (EGP), at malalaking global currency gaya ng USD, EUR, at GBP."
+      },
+      {
+        "question": "Available ba ang Gulf Rate sa ibang Gulf countries?",
+        "answer": "Sa kasalukuyan, ganap na operational kami sa Saudi Arabia at nasa proseso ng pag-expand sa ibang Gulf countries kabilang ang UAE, Qatar, Kuwait, Bahrain, at Oman. Maaari kang mag-sign up para sa notification para maabisuhan kapag nag-launch kami sa iyong bansa."
+      }
+    ]
+  },
+  "appPromo": {
+    "title": "Kunin ang Gulf Rate Mobile App",
+    "subtitle": "Malapit na! Ang aming mobile app ay gagawing mas madali ang paghahambing ng rate, pag-set ng alert, at pagtitipid sa iyong international transfer.",
+    "downloadOn": "I-download sa",
+    "appStore": "App Store",
+    "getItOn": "Kunin sa",
+    "googlePlay": "Google Play",
+    "notifyMe": "Maabisuhan kapag available ang aming app:",
+    "enterEmail": "Ilagay ang iyong email",
+    "notifyButton": "Abisuhan Ako"
+  },
+  "leadCapture": {
+    "title": "Rate Alert Notification",
+    "description": "Maabisuhan kapag ang iyong gustong currency ay umabot sa iyong target na exchange rate. Magpapadala kami sa iyo ng email o SMS para maisagawa mo ang iyong transfer sa pinakamahusay na oras.",
+    "features": [
+      {
+        "title": "Personalized Rate Alert",
+        "description": "I-set ang iyong target na rate at agad na maabisuhan"
+      },
+      {
+        "title": "Market News & Updates",
+        "description": "Tumanggap ng insight tungkol sa currency market trends"
+      },
+      {
+        "title": "Special Offers & Promotions",
+        "description": "Exclusive deals mula sa aming provider partners"
+      }
+    ],
+    "privacy": "Iginagalang namin ang iyong privacy at hindi namin kailanman ibabahagi ang iyong impormasyon sa third party nang walang pahintulot mo. Tingnan ang aming",
+    "privacyLink": "Privacy Policy",
+    "form": {
+      "name": "Buong Pangalan",
+      "email": "Email Address",
+      "countryCode": "Country Code",
+      "phone": "Numero ng Telepono",
+      "selectCountryCode": "Pumili ng country code",
+      "fromCurrency": "Mula sa Currency",
+      "toCurrency": "Papuntang Currency",
+      "selectCurrency": "Pumili ng currency",
+      "targetRate": "Target na Rate (Opsyonal)",
+      "consent": "Pumapayag akong tumanggap ng email at SMS alert tungkol sa exchange rate at mga alok mula sa Gulf Rate",
+      "submit": "Mag-subscribe sa Rate Alert"
+    },
+    "success": {
+      "title": "Tagumpay!",
+      "message": "Matagumpay kang nag-subscribe sa rate alert."
+    },
+    "error": {
+      "title": "Nabigo ang Subscription",
+      "message": "Hindi namin ma-process ang iyong subscription. Pakisubukang muli mamaya."
+    }
+  },
+  "footer": {
+    "companyDescription": "Ang nangungunang exchange rate comparison platform para sa mga OFW sa Gulf region. Hanapin ang pinakamahusay na rate para sa iyong international money transfer.",
+    "quickLinks": "Quick Links",
+    "countries": "Mga Bansa",
+    "legal": "Legal",
+    "allRightsReserved": "Lahat ng karapatan ay nakalaan",
+    "language": "Wika",
+    "blog": "Blog",
+    "aboutUs": "Tungkol sa Amin",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "cookies": "Cookies Policy",
+    "disclaimer": "Disclaimer",
+    "compliance": "SAMA Compliance"
+  },
+  "stickyCta": {
+    "title": "Gusto mo ng pinakamahusay na rate?",
+    "subtitle": "Mag-sign up para sa libreng rate alert",
+    "button": "Kumuha ng Alert"
+  },
+  "countryPage": {
+    "title": "Pinakamahusay na Exchange Rate sa {{country}}",
+    "subtitle": "Ihambing ang real-time na currency exchange rate mula sa nangungunang provider sa {{country}}",
+    "comingSoonMessage": "Malapit nang dumating ang Gulf Rate sa {{country}}. Mag-subscribe para maabisuhan kapag nag-launch kami!",
+    "enterEmail": "Ilagay ang iyong email address",
+    "notifyMe": "Abisuhan Ako",
+    "whatToExpect": "Ano ang Maaasahan Kapag Nag-launch Kami sa {{country}}",
+    "features": {
+      "localProviders": "Lokal na Provider",
+      "realTimeRates": "Real-Time Rate",
+      "rateAlerts": "Rate Alert"
+    },
+    "featureDescriptions": {
+      "localProviders": "Makikipag-partner kami sa pinakamahusay na money transfer provider sa {{country}} para bigyan ka ng competitive rate.",
+      "realTimeRates": "Ihambing ang exchange rate na ina-update sa real-time para makuha ang pinakamahusay na deal sa iyong international transfer.",
+      "rateAlerts": "Mag-set up ng personalized alert para maabisuhan kapag available ang iyong target na exchange rate."
+    },
+    "stayInformed": "Manatiling Updated Tungkol sa Aming Launch",
+    "stayInformedDescription": "Mag-subscribe para tumanggap ng updates tungkol sa aming launch sa {{country}} at maging una sa makakaalam kapag nag-live kami.",
+    "subscribe": "Mag-subscribe"
+  }
+}

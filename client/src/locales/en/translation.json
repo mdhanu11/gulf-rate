@@ -1,0 +1,225 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred. Please try again.",
+    "tryAgain": "Try Again",
+    "free": "Free",
+    "available": "Available",
+    "comingSoon": "Coming Soon",
+    "submitting": "Submitting..."
+  },
+  "seo": {
+    "home": {
+      "title": "Gulf Rate - Best Exchange Rates for Expatriates in Gulf Countries",
+      "description": "Compare real-time exchange rates from 10 trusted providers in Saudi Arabia. Find the best rates for international money transfers."
+    },
+    "country": {
+      "title": "{{country}} Exchange Rates | Gulf Rate",
+      "description": "Compare the best exchange rates and money transfer services in {{country}}. Save on your international remittances with Gulf Rate."
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "providers": "Providers",
+    "compare": "Compare Rates",
+    "alerts": "Rate Alerts",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Best Exchange Rates for Expatriates in Saudi Arabia",
+    "subtitle": "Compare real-time exchange rates from 10 trusted providers. Save on your international money transfers.",
+    "cta": {
+      "compare": "Compare Rates Now",
+      "alerts": "Get Rate Alerts"
+    }
+  },
+  "quickSearch": {
+    "from": "From",
+    "to": "To",
+    "button": "Find Best Rates"
+  },
+  "benefits": {
+    "title": "Why Use Gulf Rate?",
+    "subtitle": "We help expatriates find the best exchange rates and save money on international transfers.",
+    "cards": [
+      {
+        "title": "Real-Time Rates",
+        "description": "Compare up-to-date exchange rates from 10 trusted Saudi providers in one place."
+      },
+      {
+        "title": "Save Money",
+        "description": "Find the best rates and lowest fees to maximize your money transfers back home."
+      },
+      {
+        "title": "Rate Alerts",
+        "description": "Set alerts for your target exchange rates and get notified when they're available."
+      }
+    ]
+  },
+  "rateTable": {
+    "title": "{{country}} Exchange Rates",
+    "subtitle": "Compare the latest exchange rates from top providers",
+    "lastUpdated": "Last updated",
+    "sortBy": "Sort by",
+    "for": "For",
+    "transfer": "Transfer",
+    "viewMore": "View All {{count}} Providers",
+    "viewLess": "View Less",
+    "filter": {
+      "amount": "Amount",
+      "currency": "Target Currency",
+      "selectCurrency": "Select a currency",
+      "button": "Update Results"
+    },
+    "columns": {
+      "provider": "Provider",
+      "rate": "Rate",
+      "youGet": "You Get",
+      "fees": "Fees",
+      "transferTime": "Transfer Time",
+      "rating": "Rating"
+    },
+    "sortOptions": {
+      "bestRate": "Best Rate",
+      "lowestFees": "Lowest Fees",
+      "userRating": "User Rating"
+    }
+  },
+  "providers": {
+    "title": "Our Trusted Exchange Providers",
+    "subtitle": "We partner with the most reliable money transfer services in Saudi Arabia"
+  },
+  "alerts": {
+    "title": "Get Notified About the Best Exchange Rates",
+    "subtitle": "Sign up for rate alerts and we'll notify you when exchange rates reach your target"
+  },
+  "countries": {
+    "title": "Available in Gulf Countries",
+    "subtitle": "Gulf Rate is expanding across the GCC region to provide the best exchange rates for expatriates",
+    "sa": "Saudi Arabia",
+    "ae": "United Arab Emirates",
+    "qa": "Qatar",
+    "kw": "Kuwait",
+    "bh": "Bahrain",
+    "om": "Oman"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about Gulf Rate and foreign exchange in Saudi Arabia",
+    "items": [
+      {
+        "question": "How often are exchange rates updated?",
+        "answer": "Gulf Rate updates exchange rates from all providers several times per day. Most rates are refreshed every 1-3 hours during business hours. The exact time of the last update is displayed alongside each rate in the comparison table."
+      },
+      {
+        "question": "Is Gulf Rate a money transfer service?",
+        "answer": "No, Gulf Rate is a comparison platform. We help you find the best exchange rates and transfer services, but we don't process transfers ourselves. Once you find a provider with favorable rates, you'll be directed to their official website to complete your transaction."
+      },
+      {
+        "question": "How do rate alerts work?",
+        "answer": "When you sign up for rate alerts, you can specify your target exchange rate. Once any of our providers offers a rate that meets or exceeds your target, we'll send you an immediate notification via email or SMS so you can take advantage of the favorable rate."
+      },
+      {
+        "question": "Which currencies does Gulf Rate support?",
+        "answer": "We currently focus on the most popular corridors for expatriates in Saudi Arabia, including Saudi Riyal (SAR) to Indian Rupee (INR), Pakistani Rupee (PKR), Philippine Peso (PHP), Bangladeshi Taka (BDT), Nepalese Rupee (NPR), Egyptian Pound (EGP), and major global currencies like USD, EUR, and GBP."
+      },
+      {
+        "question": "Is Gulf Rate available in other Gulf countries?",
+        "answer": "We're currently fully operational in Saudi Arabia and are in the process of expanding to other Gulf countries including UAE, Qatar, Kuwait, Bahrain, and Oman. You can sign up for notifications to be alerted when we launch in your country."
+      }
+    ]
+  },
+  "appPromo": {
+    "title": "Get the Gulf Rate Mobile App",
+    "subtitle": "Coming soon! Our mobile app will make it even easier to compare rates, set alerts, and save money on your international transfers.",
+    "downloadOn": "Download on the",
+    "appStore": "App Store",
+    "getItOn": "Get it on",
+    "googlePlay": "Google Play",
+    "notifyMe": "Get notified when our app is available:",
+    "enterEmail": "Enter your email",
+    "notifyButton": "Notify Me"
+  },
+  "leadCapture": {
+    "title": "Rate Alert Notification",
+    "description": "Get notified when your preferred currency reaches your target exchange rate. We'll send you an email or SMS so you can make your transfer at the best time.",
+    "features": [
+      {
+        "title": "Personalized Rate Alerts",
+        "description": "Set your target rate and get notified instantly"
+      },
+      {
+        "title": "Market News & Updates",
+        "description": "Receive insights about currency market trends"
+      },
+      {
+        "title": "Special Offers & Promotions",
+        "description": "Exclusive deals from our provider partners"
+      }
+    ],
+    "privacy": "We respect your privacy and will never share your information with third parties without your consent. See our",
+    "privacyLink": "Privacy Policy",
+    "form": {
+      "name": "Full Name",
+      "email": "Email Address",
+      "countryCode": "Country Code",
+      "phone": "Phone Number",
+      "selectCountryCode": "Select country code",
+      "fromCurrency": "From Currency",
+      "toCurrency": "To Currency",
+      "selectCurrency": "Select currency",
+      "targetRate": "Target Rate (Optional)",
+      "consent": "I agree to receive email and SMS alerts about exchange rates and offers from Gulf Rate",
+      "submit": "Subscribe to Rate Alerts"
+    },
+    "success": {
+      "title": "Success!",
+      "message": "You've been successfully subscribed to rate alerts."
+    },
+    "error": {
+      "title": "Subscription Failed",
+      "message": "We couldn't process your subscription. Please try again later."
+    }
+  },
+  "footer": {
+    "companyDescription": "The leading exchange rate comparison platform for expatriates in the Gulf region. Find the best rates for your international money transfers.",
+    "quickLinks": "Quick Links",
+    "countries": "Countries",
+    "legal": "Legal",
+    "allRightsReserved": "All rights reserved",
+    "language": "Language",
+    "blog": "Blog",
+    "aboutUs": "About Us",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "cookies": "Cookies Policy",
+    "disclaimer": "Disclaimer",
+    "compliance": "SAMA Compliance"
+  },
+  "stickyCta": {
+    "title": "Want the best rates?",
+    "subtitle": "Sign up for free rate alerts",
+    "button": "Get Alerts"
+  },
+  "countryPage": {
+    "title": "Best Exchange Rates in {{country}}",
+    "subtitle": "Compare real-time currency exchange rates from top providers in {{country}}",
+    "comingSoonMessage": "Gulf Rate is coming soon to {{country}}. Subscribe to be notified when we launch!",
+    "enterEmail": "Enter your email address",
+    "notifyMe": "Notify Me",
+    "whatToExpect": "What to Expect When We Launch in {{country}}",
+    "features": {
+      "localProviders": "Local Providers",
+      "realTimeRates": "Real-Time Rates",
+      "rateAlerts": "Rate Alerts"
+    },
+    "featureDescriptions": {
+      "localProviders": "We'll partner with the best money transfer providers in {{country}} to bring you competitive rates.",
+      "realTimeRates": "Compare exchange rates updated in real-time to get the best deals on your international transfers.",
+      "rateAlerts": "Set up personalized alerts to be notified when your target exchange rate becomes available."
+    },
+    "stayInformed": "Stay Informed About Our Launch",
+    "stayInformedDescription": "Subscribe to receive updates about our launch in {{country}} and be the first to know when we go live.",
+    "subscribe": "Subscribe"
+  }
+}
