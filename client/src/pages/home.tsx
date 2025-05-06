@@ -246,6 +246,9 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+      {/* Exchange Rate Comparison Table */}
+      <RateComparisonTable countryCode="sa" />
+
       {/* Key Benefits Section */}
       <section className="py-12 bg-white">
         <div className="container mx-auto px-4">
@@ -275,9 +278,6 @@ const HomePage: React.FC = () => {
           </div>
         </div>
       </section>
-
-      {/* Exchange Rate Comparison Table */}
-      <RateComparisonTable countryCode="sa" />
 
       {/* Featured Providers Section */}
       <section id="providers" className="py-12 bg-white">
