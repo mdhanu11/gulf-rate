@@ -154,7 +154,7 @@ const HomePage: React.FC = () => {
                 </a>
                 <a 
                   href="#contact" 
-                  className="bg-white hover:bg-gray-100 text-primary-700 px-6 py-3 rounded-lg font-medium inline-flex items-center transition"
+                  className="bg-secondary hover:bg-secondary/90 text-gray-900 px-6 py-3 rounded-lg font-medium inline-flex items-center transition"
                 >
                   <i className="fas fa-bell mr-2"></i>
                   <span>{t('hero.cta.alerts')}</span>
