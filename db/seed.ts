@@ -1,5 +1,6 @@
 import { db } from "./index";
 import * as schema from "@shared/schema";
+import { eq, and } from "drizzle-orm";
 
 async function seed() {
   try {
@@ -18,7 +19,7 @@ async function seed() {
     console.log("Adding countries...");
     for (const country of countries) {
       const existing = await db.query.countries.findFirst({
-        where: schema.countries.code.equals(country.code),
+        where: (c) => eq(c.code, country.code),
       });
 
       if (!existing) {
@@ -47,7 +48,7 @@ async function seed() {
     const providerMap = new Map();
     for (const provider of saProviders) {
       const existing = await db.query.providers.findFirst({
-        where: schema.providers.providerKey.equals(provider.providerKey),
+        where: (p) => eq(p.providerKey, provider.providerKey),
       });
 
       if (!existing) {
@@ -69,9 +70,11 @@ async function seed() {
       for (const currency of currencies) {
         // Check if exchange rate exists
         const existing = await db.query.exchangeRates.findFirst({
-          where: schema.exchangeRates.providerId.equals(providerId) && 
-                schema.exchangeRates.fromCurrency.equals("SAR") && 
-                schema.exchangeRates.toCurrency.equals(currency),
+          where: (er) => and(
+            eq(er.providerId, providerId),
+            eq(er.fromCurrency, "SAR"),
+            eq(er.toCurrency, currency)
+          ),
         });
 
         // Generate realistic mock data for each provider
