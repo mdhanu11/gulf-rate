@@ -47,14 +47,14 @@ const HomePage: React.FC = () => {
   // Currency exchange providers data
   const providers = [
     { id: 'stc', name: 'STC Bank', logo: 'https://upload.wikimedia.org/wikipedia/en/8/8e/Stc_pay_logo.png', logoColor: 'primary', url: 'https://www.stcbank.com.sa/' },
-    { id: 'alrajhi', name: 'Al Rajhi Bank', logo: 'https://upload.wikimedia.org/wikipedia/en/e/e8/AlRajhi_Bank.svg', logoColor: 'green', url: 'https://www.alrajhibank.com.sa/EN' },
-    { id: 'wu', name: 'Western Union', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Western_Union_Logo.svg/640px-Western_Union_Logo.svg.png', logoColor: 'yellow', url: 'https://www.westernunion.com/sa/en/home.html' },
+    { id: 'alrajhi', name: 'Al Rajhi Bank', logo: '/images/providers/alrajhi.png', logoColor: 'green', url: 'https://www.alrajhibank.com.sa/EN' },
+    { id: 'wu', name: 'Western Union', logo: '/images/providers/wu.svg', logoColor: 'yellow', url: 'https://www.westernunion.com/sa/en/home.html' },
     { id: 'barq', name: 'Barq', logo: '/images/providers/barq.png', logoColor: 'orange', url: 'https://barq.com/' },
-    { id: 'mobilypay', name: 'MobilyPay', logo: 'https://upload.wikimedia.org/wikipedia/en/7/75/Mobily_logo.svg', logoColor: 'purple', url: 'https://mobilypay.sa/' },
+    { id: 'mobilypay', name: 'MobilyPay', logo: '/images/providers/mobilypay.svg', logoColor: 'purple', url: 'https://mobilypay.sa/' },
     { id: 'tiqmo', name: 'Tiqmo', logo: '/images/providers/tiqmo.png', logoColor: 'blue', url: 'https://tiqmo.com/' },
-    { id: 'd360', name: 'D360 Bank', logo: 'https://www.corevalues360.com/360-degree-values-assessment/img/360-degree.png', logoColor: 'indigo', url: 'https://d360.com/en' },
+    { id: 'd360', name: 'D360 Bank', logo: '/images/providers/d360.svg', logoColor: 'indigo', url: 'https://d360.com/en' },
     { id: 'alinma', name: 'AlInma', logo: '/images/providers/alinma.png', logoColor: 'teal', url: 'https://www.alinma.com/' },
-    { id: 'urpay', name: 'Urpay', logo: 'https://play-lh.googleusercontent.com/AqJIXfJrAK7lXwjCjr7VW3GR8vmg8Npnj_vfiVzEu0eMKX4dbWF60M_VR8PGaVP_3QA=w240-h480-rw', logoColor: 'red', url: 'https://www.urpay.com.sa/' },
+    { id: 'urpay', name: 'Urpay', logo: '/images/providers/urpay.png', logoColor: 'red', url: 'https://www.urpay.com.sa/' },
     { id: 'friendipay', name: 'FriendiPay', logo: '/images/providers/friendipay.jpg', logoColor: 'pink', url: 'https://www.friendipay.sa/' },
   ];
   

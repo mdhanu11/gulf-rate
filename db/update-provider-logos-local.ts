@@ -6,11 +6,11 @@ async function updateLogos() {
   try {
     console.log("Starting provider logo update with local images...");
 
-    // Define provider logos with local images where available
+    // Define provider logos with all local images
     const providerLogos = [
       {
         providerKey: "stc",
-        logo: "https://upload.wikimedia.org/wikipedia/en/8/8e/Stc_pay_logo.png"
+        logo: "https://upload.wikimedia.org/wikipedia/en/8/8e/Stc_pay_logo.png" // Still using external image for now
       },
       {
         providerKey: "barq",
@@ -26,19 +26,19 @@ async function updateLogos() {
       },
       {
         providerKey: "alrajhi",
-        logo: "https://upload.wikimedia.org/wikipedia/en/e/e8/AlRajhi_Bank.svg"
+        logo: "/images/providers/alrajhi.png" // Local image
       },
       {
         providerKey: "wu",
-        logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/Western_Union_Logo.svg/640px-Western_Union_Logo.svg.png"
+        logo: "/images/providers/wu.svg" // Local image
       },
       {
         providerKey: "mobilypay",
-        logo: "https://upload.wikimedia.org/wikipedia/en/7/75/Mobily_logo.svg"
+        logo: "/images/providers/mobilypay.svg" // Local image
       },
       {
         providerKey: "d360",
-        logo: "https://www.corevalues360.com/360-degree-values-assessment/img/360-degree.png"
+        logo: "/images/providers/d360.svg" // Local image
       },
       {
         providerKey: "alinma",
@@ -46,7 +46,7 @@ async function updateLogos() {
       },
       {
         providerKey: "urpay",
-        logo: "https://play-lh.googleusercontent.com/AqJIXfJrAK7lXwjCjr7VW3GR8vmg8Npnj_vfiVzEu0eMKX4dbWF60M_VR8PGaVP_3QA=w240-h480-rw"
+        logo: "/images/providers/urpay.png" // Local image
       }
     ];
 
