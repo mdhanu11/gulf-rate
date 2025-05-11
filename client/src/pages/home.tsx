@@ -303,9 +303,9 @@ const HomePage: React.FC = () => {
                 <div className="w-16 h-16 mb-3 flex items-center justify-center">
                   {provider.logo ? (
                     <div className={`h-16 w-16 rounded-md flex items-center justify-center p-2 shadow-sm overflow-hidden 
-                          bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200`}
+                          bg-gradient-to-br from-gray-200 to-gray-300 border border-gray-300`}
                           style={{ 
-                            boxShadow: 'inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05)'
+                            boxShadow: 'inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1)'
                           }}
                     >
                       <img 

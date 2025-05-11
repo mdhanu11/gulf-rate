@@ -273,9 +273,9 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({ countryCode })
                             {provider.logo ? (
                               <div 
                                 className={`h-10 w-10 rounded-md flex items-center justify-center p-1 shadow-sm overflow-hidden 
-                                  bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200`}
+                                  bg-gradient-to-br from-gray-200 to-gray-300 border border-gray-300`}
                                 style={{ 
-                                  boxShadow: 'inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05)'
+                                  boxShadow: 'inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1)'
                                 }}
                               >
                                 <img 
