@@ -271,21 +271,26 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({ countryCode })
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10">
                             {provider.logo ? (
-                              <img 
-                                className="h-10 w-10 rounded-md object-contain bg-white" 
-                                src={provider.logo} 
-                                alt={`${provider.name} logo`}
-                                onError={(e) => {
-                                  // Fall back to text logo on image load error
-                                  const target = e.target as HTMLImageElement;
-                                  target.style.display = 'none';
-                                  target.parentElement?.classList.add(`bg-${provider.logoColor || 'primary'}-100`);
-                                  target.parentElement?.classList.add('flex', 'items-center', 'justify-center');
-                                  if (target.parentElement) {
-                                    target.parentElement.innerHTML = `<span class="text-${provider.logoColor || 'primary'}-600 font-bold text-sm">${provider.logoText || provider.name.substring(0, 2).toUpperCase()}</span>`;
-                                  }
-                                }}
-                              />
+                              <div className="h-10 w-10 rounded-md flex items-center justify-center bg-white p-1 shadow-sm overflow-hidden">
+                                <img 
+                                  className="max-h-full max-w-full object-contain" 
+                                  src={provider.logo} 
+                                  alt={`${provider.name} logo`}
+                                  loading="eager"
+                                  onError={(e) => {
+                                    // Fall back to text logo on image load error
+                                    const target = e.target as HTMLImageElement;
+                                    target.style.display = 'none';
+                                    const parent = target.parentElement;
+                                    if (parent) {
+                                      parent.classList.add(`bg-${provider.logoColor || 'primary'}-100`);
+                                      parent.classList.add('flex', 'items-center', 'justify-center');
+                                      const logoText = provider.logoText || provider.name.substring(0, 2).toUpperCase();
+                                      parent.innerHTML = `<span class="text-${provider.logoColor || 'primary'}-600 font-bold text-sm">${logoText}</span>`;
+                                    }
+                                  }}
+                                />
+                              </div>
                             ) : (
                               <div 
                                 className={`h-10 w-10 rounded-md bg-${provider.logoColor || 'primary'}-100 flex items-center justify-center text-${provider.logoColor || 'primary'}-600 font-bold text-sm`}
