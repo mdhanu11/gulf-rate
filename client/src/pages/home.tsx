@@ -46,16 +46,16 @@ const HomePage: React.FC = () => {
   
   // Currency exchange providers data
   const providers = [
-    { id: 'stc', name: 'STC Bank', logo: null, logoColor: 'primary', url: 'https://www.stcbank.com.sa/' },
-    { id: 'alrajhi', name: 'Al Rajhi Bank', logo: null, logoColor: 'green', url: 'https://www.alrajhibank.com.sa/EN' },
-    { id: 'wu', name: 'Western Union', logo: null, logoColor: 'yellow', url: 'https://www.westernunion.com/sa/en/home.html' },
-    { id: 'barq', name: 'Barq', logo: null, logoColor: 'orange', url: 'https://barq.com/' },
-    { id: 'mobilypay', name: 'MobilyPay', logo: null, logoColor: 'purple', url: 'https://mobilypay.sa/' },
-    { id: 'tiqmo', name: 'Tiqmo', logo: null, logoColor: 'blue', url: 'https://tiqmo.com/' },
-    { id: 'd360', name: 'D360 Bank', logo: null, logoColor: 'indigo', url: 'https://d360.com/en' },
-    { id: 'alinma', name: 'AlInma', logo: null, logoColor: 'teal', url: 'https://www.alinma.com/' },
-    { id: 'urpay', name: 'Urpay', logo: null, logoColor: 'red', url: 'https://www.urpay.com.sa/' },
-    { id: 'friendipay', name: 'FriendiPay', logo: null, logoColor: 'pink', url: 'https://www.friendipay.sa/' },
+    { id: 'stc', name: 'STC Bank', logo: 'https://www.stcbank.com.sa/sites/web-v1/themes/custom/stcpay/logo.svg', logoColor: 'primary', url: 'https://www.stcbank.com.sa/' },
+    { id: 'alrajhi', name: 'Al Rajhi Bank', logo: 'https://www.alrajhibank.com.sa/sites/default/files/2021-09/alrajhi-bank-logo.svg', logoColor: 'green', url: 'https://www.alrajhibank.com.sa/EN' },
+    { id: 'wu', name: 'Western Union', logo: 'https://upload.wikimedia.org/wikipedia/commons/4/48/Western_Union_Logo.svg', logoColor: 'yellow', url: 'https://www.westernunion.com/sa/en/home.html' },
+    { id: 'barq', name: 'Barq', logo: 'https://barq.com/images/barq-logo.png', logoColor: 'orange', url: 'https://barq.com/' },
+    { id: 'mobilypay', name: 'MobilyPay', logo: 'https://www.mobily.com.sa/img/mobily-logo-top.png', logoColor: 'purple', url: 'https://mobilypay.sa/' },
+    { id: 'tiqmo', name: 'Tiqmo', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Tiqmo-Logo.svg/2560px-Tiqmo-Logo.svg.png', logoColor: 'blue', url: 'https://tiqmo.com/' },
+    { id: 'd360', name: 'D360 Bank', logo: 'https://d360bank.sa/themes/custom/d360/logo.svg', logoColor: 'indigo', url: 'https://d360.com/en' },
+    { id: 'alinma', name: 'AlInma', logo: 'https://alinma.com/style%20library/en/img/inma-logo-en.png', logoColor: 'teal', url: 'https://www.alinma.com/' },
+    { id: 'urpay', name: 'Urpay', logo: 'https://www.urpay.com.sa/static/media/urpay.de1d24f0ea7841c4d0f1.png', logoColor: 'red', url: 'https://www.urpay.com.sa/' },
+    { id: 'friendipay', name: 'FriendiPay', logo: 'https://friendimobile.sa/wp-content/uploads/2019/09/logo_new-1.png', logoColor: 'pink', url: 'https://www.friendipay.sa/' },
   ];
   
   // Gulf countries data
@@ -301,9 +301,27 @@ const HomePage: React.FC = () => {
                 className="flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:shadow-md transition"
               >
                 <div className="w-16 h-16 mb-3 flex items-center justify-center">
-                  <div className={`h-16 w-16 rounded-md bg-${provider.logoColor}-100 flex items-center justify-center text-${provider.logoColor}-600 font-bold text-xl`}>
-                    {provider.name.substring(0, 2).toUpperCase()}
-                  </div>
+                  {provider.logo ? (
+                    <img 
+                      src={provider.logo} 
+                      alt={`${provider.name} logo`}
+                      className="h-16 w-16 rounded-md object-contain bg-white p-2"
+                      onError={(e) => {
+                        // Fall back to text logo on image load error
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        target.parentElement?.classList.add(`bg-${provider.logoColor}-100`);
+                        target.parentElement?.classList.add('flex', 'items-center', 'justify-center');
+                        if (target.parentElement) {
+                          target.parentElement.innerHTML = `<span class="text-${provider.logoColor}-600 font-bold text-xl">${provider.name.substring(0, 2).toUpperCase()}</span>`;
+                        }
+                      }}
+                    />
+                  ) : (
+                    <div className={`h-16 w-16 rounded-md bg-${provider.logoColor}-100 flex items-center justify-center text-${provider.logoColor}-600 font-bold text-xl`}>
+                      {provider.name.substring(0, 2).toUpperCase()}
+                    </div>
+                  )}
                 </div>
                 <h3 className="font-medium text-gray-900 text-center">{provider.name}</h3>
               </a>
