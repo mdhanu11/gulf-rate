@@ -302,7 +302,12 @@ const HomePage: React.FC = () => {
               >
                 <div className="w-16 h-16 mb-3 flex items-center justify-center">
                   {provider.logo ? (
-                    <div className="h-16 w-16 rounded-md flex items-center justify-center bg-white p-2 shadow-sm overflow-hidden">
+                    <div className={`h-16 w-16 rounded-md flex items-center justify-center p-2 shadow-sm overflow-hidden 
+                          bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200`}
+                          style={{ 
+                            boxShadow: 'inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 2px 4px rgba(0, 0, 0, 0.05)'
+                          }}
+                    >
                       <img 
                         src={provider.logo} 
                         alt={`${provider.name} logo`}
