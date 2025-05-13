@@ -4,7 +4,7 @@ import { eq, and } from "drizzle-orm";
 
 async function seed() {
   try {
-    console.log("Starting database seeding...");
+    console.log("Starting database seeding....");
 
     // Add countries
     const countries = [
