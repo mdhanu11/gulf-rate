@@ -65,6 +65,13 @@
     "transfer": "Transfer",
     "viewMore": "View All {{count}} Providers",
     "viewLess": "View Less",
+    "sar": "SAR",
+    "sendMoney": "Send Money",
+    "showMore": "Show More Providers",
+    "showLess": "Show Less",
+    "loading": "Loading rates...",
+    "error": "Failed to load rates",
+    "retry": "Try Again",
     "filter": {
       "amount": "Amount",
       "currency": "Target Currency",
@@ -82,7 +89,8 @@
     "sortOptions": {
       "bestRate": "Best Rate",
       "lowestFees": "Lowest Fees",
-      "userRating": "User Rating"
+      "userRating": "User Rating",
+      "highestRated": "Highest Rated"
     }
   },
   "providers": {

@@ -4,7 +4,7 @@ import { eq, and } from "drizzle-orm";
 
 async function seed() {
   try {
-    console.log("Starting database seeding....");
+    console.log("Starting database seeding...");
 
     // Add countries
     const countries = [
@@ -231,7 +231,7 @@ async function seed() {
             and(
               eq(er.providerId, providerId),
               eq(er.fromCurrency, "SAR"),
-              eq(er.toCurrency, currency)
+              eq(er.toCurrency, currency),
             ),
         });
 
@@ -306,8 +306,8 @@ async function seed() {
             Math.floor(Math.random() * 3) === 0
               ? "1-2 days"
               : Math.floor(Math.random() * 2) === 0
-              ? "1-24 hours"
-              : "6-12 hours";
+                ? "1-24 hours"
+                : "6-12 hours";
           rating = 3.0 + Math.random() * 2.0; // Random rating between 3.0 and 5.0
           highlight = false;
         }
@@ -327,19 +327,19 @@ async function seed() {
               fees === 0
                 ? "First transfer"
                 : Math.random() > 0.5
-                ? "Fixed fee"
-                : "Variable fee",
+                  ? "Fixed fee"
+                  : "Variable fee",
             transferTime,
             rating,
             highlight,
             lastUpdated: new Date(),
           });
           console.log(
-            `Added exchange rate: SAR to ${currency} for ${providerKey}`
+            `Added exchange rate: SAR to ${currency} for ${providerKey}`,
           );
         } else {
           console.log(
-            `Exchange rate SAR to ${currency} for ${providerKey} already exists`
+            `Exchange rate SAR to ${currency} for ${providerKey} already exists`,
           );
         }
       }

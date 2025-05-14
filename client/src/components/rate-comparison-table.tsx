@@ -27,6 +27,29 @@ interface SortOption {
   icon: string;
 }
 
+// Define a local interface that matches the actual API response
+interface ProviderWithRate {
+  id: number;
+  providerKey: string;
+  name: string;
+  logo: string | null;
+  logoText: string | null;
+  logoColor: string | null;
+  url: string;
+  type: string;
+  badge: string | null;
+  rate: number;
+  rateChange: number;
+  fees: number;
+  feeType: string;
+  transferTime: string;
+  rating: number;
+  highlight: boolean;
+  active?: boolean | null;
+  sortOrder?: number | null;
+  lastUpdated: string | Date;
+}
+
 const RateComparisonTable: React.FC<{ countryCode: string }> = ({
   countryCode,
 }) => {
@@ -49,36 +72,7 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
     lastUpdated,
   } = useExchangeRates(countryCode, selectedCurrency);
 
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseFloat(e.target.value);
-    setAmount(isNaN(value) ? 0 : value);
-  };
-
-  const handleCurrencyChange = (value: string) => {
-    setSelectedCurrency(value);
-  };
-
-  const handleSort = (option: SortOption) => {
-    setSortOption(option);
-  };
-
-  const handleUpdateResults = () => {
-    refetch();
-  };
-
-  // Format the last updated timestamp
-  const formattedLastUpdated = lastUpdated
-    ? new Date(lastUpdated).toLocaleString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      }) + " (Saudi Time)"
-    : "";
-
-  // Sort options array
+  // Sort options for the rate comparison table
   const sortOptions: SortOption[] = [
     {
       key: "rate",
@@ -90,46 +84,18 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
       key: "fees",
       direction: "asc",
       label: t("rateTable.sortOptions.lowestFees"),
-      icon: "fa-tags",
+      icon: "fa-sort-amount-down",
     },
     {
       key: "rating",
       direction: "desc",
-      label: t("rateTable.sortOptions.userRating"),
-      icon: "fa-star",
+      label: t("rateTable.sortOptions.highestRated"),
+      icon: "fa-sort-amount-up",
     },
   ];
 
-  // Sort the exchange rates based on the selected sort option
-  const sortedRates = exchangeRates
-    ? [...exchangeRates].sort((a, b) => {
-        if (sortOption.key === "rate") {
-          return sortOption.direction === "desc"
-            ? b.rate - a.rate
-            : a.rate - b.rate;
-        } else if (sortOption.key === "fees") {
-          return sortOption.direction === "asc"
-            ? a.fees === 0
-              ? -1
-              : b.fees === 0
-              ? 1
-              : a.fees - b.fees
-            : b.fees === 0
-            ? -1
-            : a.fees === 0
-            ? 1
-            : b.fees - a.fees;
-        } else {
-          // Rating
-          return sortOption.direction === "desc"
-            ? b.rating - a.rating
-            : a.rating - b.rating;
-        }
-      })
-    : [];
-
-  // Currency options
-  const currencyOptions = [
+  // Currencies for quick search
+  const currencies = [
     { value: "INR", label: "INR - Indian Rupee" },
     { value: "PKR", label: "PKR - Pakistani Rupee" },
     { value: "PHP", label: "PHP - Philippine Peso" },
@@ -142,51 +108,105 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
     { value: "EUR", label: "EUR - Euro" },
   ];
 
-  const getAccentColor = (logoColor: string): string => {
-    const colorMap: Record<string, string> = {
-      primary: "#0072C6", // Blue
-      green: "#10B981", // Green
-      yellow: "#F59E0B", // Yellow
-      orange: "#F97316", // Orange
-      purple: "#8B5CF6", // Purple
-      blue: "#3B82F6", // Medium Blue
-      indigo: "#6366F1", // Indigo
-      teal: "#14B8A6", // Teal
-      red: "#EF4444", // Red
-      pink: "#EC4899", // Pink
-      // Fallback to primary
-      default: "#0072C6",
-    };
+  // Handle sorting of providers based on the selected sort option
+  const handleSort = (option: SortOption) => {
+    setSortOption(option);
+  };
 
+  // Color mapping for provider logos
+  const colorMap: Record<string, string> = {
+    primary: "#0072C6",
+    blue: "#0072C6",
+    green: "#28a745",
+    yellow: "#ffc107",
+    orange: "#fd7e14",
+    purple: "#6f42c1",
+    indigo: "#6610f2",
+    teal: "#20c997",
+    red: "#dc3545",
+    pink: "#e83e8c",
+    default: "#0072C6",
+  };
+
+  // Helper to get the accent color for provider logo backgrounds
+  const getAccentColor = (logoColor: string): string => {
     return colorMap[logoColor] || colorMap.default;
   };
 
-  // Generate rating stars
-  const renderRatingStars = (rating: number) => {
-    const stars = [];
+  // Handle changing the currency selection
+  const handleCurrencyChange = (currency: string) => {
+    setSelectedCurrency(currency);
+  };
+
+  // Determine which rates to display based on sorting
+  const sortedRates = exchangeRates
+    ? [...exchangeRates].sort((a: any, b: any) => {
+        if (sortOption.key === "rate") {
+          return sortOption.direction === "desc"
+            ? b.rate - a.rate
+            : a.rate - b.rate;
+        } else if (sortOption.key === "fees") {
+          return sortOption.direction === "desc"
+            ? b.fees - a.fees
+            : a.fees - b.fees;
+        } else {
+          // rating
+          return sortOption.direction === "desc"
+            ? b.rating - a.rating
+            : a.rating - b.rating;
+        }
+      })
+    : [];
+
+  // Helper to render the fee display
+  const renderFees = (provider: ProviderWithRate) => {
+    if (provider.fees === 0) {
+      return (
+        <span className="text-success-500 font-semibold">
+          {t("rateTable.noFees")}
+        </span>
+      );
+    } else if (provider.feeType === "Fixed fee") {
+      return (
+        <span>
+          {provider.fees} {t("rateTable.sar")}
+        </span>
+      );
+    } else if (provider.feeType === "Variable fee") {
+      return (
+        <span>
+          {provider.fees} {t("rateTable.sar")} / {(provider.fees / amount * 100).toFixed(1)}%
+        </span>
+      );
+    } else {
+      return (
+        <span>
+          {provider.fees} {t("rateTable.sar")}
+        </span>
+      );
+    }
+  };
+
+  // Helper to render star ratings
+  const renderStarRating = (rating: number) => {
     const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.3 && rating % 1 <= 0.7;
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const stars = [];
 
-    // Full stars
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(
-        <i key={`full-${i}`} className="fas fa-star text-secondary-500"></i>
-      );
-    }
-
-    // Half star
-    if (hasHalfStar) {
-      stars.push(
-        <i key="half" className="fas fa-star-half-alt text-secondary-500"></i>
-      );
-    }
-
-    // Empty stars
-    for (let i = 0; i < emptyStars; i++) {
-      stars.push(
-        <i key={`empty-${i}`} className="far fa-star text-secondary-500"></i>
-      );
+    for (let i = 0; i < 5; i++) {
+      if (i < fullStars) {
+        stars.push(
+          <i key={i} className="fas fa-star text-yellow-400"></i>
+        );
+      } else if (i === fullStars && hasHalfStar) {
+        stars.push(
+          <i key={i} className="fas fa-star-half-alt text-yellow-400"></i>
+        );
+      } else {
+        stars.push(
+          <i key={i} className="far fa-star text-gray-300"></i>
+        );
+      }
     }
 
     return (
@@ -206,288 +226,297 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
     <section id="compare" className="py-12 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 font-inter">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
             {t("rateTable.title", { country: t(`countries.${countryCode}`) })}
           </h2>
-          <p className="mt-3 text-gray-600">{t("rateTable.subtitle")}</p>
+          <p className="mt-3 text-lg text-gray-600 max-w-2xl mx-auto">
+            {t("rateTable.subtitle")}
+          </p>
         </div>
 
-        {/* Currency and Amount Filter */}
-        <Card className="p-4 mb-6">
-          <div className="flex flex-col md:flex-row md:items-end space-y-4 md:space-y-0 md:space-x-4">
-            <div className="flex-1">
-              <label className="block text-gray-700 text-sm font-medium mb-1">
-                {t("rateTable.filter.amount")}
-              </label>
-              <div className="relative">
-                <Input
-                  type="number"
-                  value={amount}
-                  min={0}
-                  onChange={handleAmountChange}
-                  className="pl-16"
-                />
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <span className="text-gray-500 font-medium">SAR</span>
+        <Card className="p-4 md:p-6 mb-8">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between space-y-4 md:space-y-0 mb-6">
+            <div className="space-y-4 md:flex md:space-y-0 md:space-x-4">
+              <div className="w-full md:w-40">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t("rateTable.filter.currency")}
+                </label>
+                <Select
+                  value={selectedCurrency}
+                  onValueChange={handleCurrencyChange}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {currencies.map((currency) => (
+                      <SelectItem key={currency.value} value={currency.value}>
+                        {currency.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="w-full md:w-48">
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {t("rateTable.filter.amount")}
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span className="text-gray-500 sm:text-sm">SAR</span>
+                  </div>
+                  <Input
+                    type="number"
+                    min="1"
+                    value={amount}
+                    onChange={(e) => setAmount(Number(e.target.value))}
+                    className="pl-12"
+                  />
                 </div>
               </div>
             </div>
 
-            <div className="flex-1">
-              <label className="block text-gray-700 text-sm font-medium mb-1">
-                {t("rateTable.filter.currency")}
-              </label>
-              <Select
-                value={selectedCurrency}
-                onValueChange={handleCurrencyChange}
-              >
-                <SelectTrigger>
-                  <SelectValue
-                    placeholder={t("rateTable.filter.selectCurrency")}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  {currencyOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Button
-                className="w-full md:w-auto"
-                onClick={handleUpdateResults}
-              >
-                {t("rateTable.filter.button")}
-              </Button>
-            </div>
-          </div>
-        </Card>
-
-        {/* Table Sorting Options */}
-        <div className="flex flex-wrap items-center justify-between mb-4">
-          <div className="text-sm text-gray-600 mb-2 md:mb-0">
-            <i className="fas fa-sync-alt mr-1"></i>{" "}
-            {t("rateTable.lastUpdated")}: {formattedLastUpdated}
-          </div>
-
-          <div className="flex space-x-2">
-            <span className="text-sm text-gray-600 mr-2 self-center">
-              {t("rateTable.sortBy")}:
-            </span>
-            {sortOptions.map((option) => (
-              <Button
-                key={option.key}
-                variant={sortOption.key === option.key ? "default" : "outline"}
-                size="sm"
-                onClick={() => handleSort(option)}
-                className="text-sm px-3 py-1 h-auto"
-              >
-                <i className={`fas ${option.icon} mr-1`}></i> {option.label}
-              </Button>
-            ))}
-          </div>
-        </div>
-
-        {/* Rate Comparison Table */}
-        <Card className="mb-8 overflow-hidden">
-          <div className="overflow-x-auto">
-            {isLoading ? (
-              <div className="p-8 text-center">
-                <i className="fas fa-spinner fa-spin text-2xl text-primary-500 mb-2"></i>
-                <p>{t("common.loading")}</p>
-              </div>
-            ) : isError ? (
-              <div className="p-8 text-center text-error">
-                <i className="fas fa-exclamation-circle text-2xl mb-2"></i>
-                <p>{t("common.error")}</p>
+            <div className="flex flex-wrap gap-2">
+              {sortOptions.map((option) => (
                 <Button
-                  variant="outline"
-                  onClick={() => refetch()}
-                  className="mt-2"
+                  key={option.label}
+                  variant={
+                    sortOption.label === option.label ? "default" : "outline"
+                  }
+                  size="sm"
+                  onClick={() => handleSort(option)}
+                  className="flex items-center"
                 >
-                  {t("common.tryAgain")}
+                  <i className={`fas ${option.icon} mr-1`}></i>
+                  {option.label}
                 </Button>
+              ))}
+            </div>
+          </div>
+
+          {isLoading ? (
+            <div className="text-center py-8">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+              <p className="mt-2 text-gray-600">{t("rateTable.loading")}</p>
+            </div>
+          ) : isError ? (
+            <div className="text-center py-8">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-500 mb-4">
+                <i className="fas fa-exclamation-triangle text-2xl"></i>
               </div>
-            ) : (
-              <Table>
-                <TableHeader className="bg-gray-50">
-                  <TableRow>
-                    <TableHead>{t("rateTable.columns.provider")}</TableHead>
-                    <TableHead>{t("rateTable.columns.rate")}</TableHead>
-                    <TableHead>{t("rateTable.columns.youGet")}</TableHead>
-                    <TableHead>{t("rateTable.columns.fees")}</TableHead>
-                    <TableHead>{t("rateTable.columns.transferTime")}</TableHead>
-                    <TableHead>{t("rateTable.columns.rating")}</TableHead>
-                    <TableHead></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {displayedProviders.map((provider) => (
-                    <TableRow
-                      key={provider.id}
-                      className={`hover:bg-gray-50 ${
-                        provider.highlight ? "bg-green-50" : ""
-                      }`}
-                    >
-                      <TableCell>
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 h-10 w-10">
-                            {provider.logo ? (
-                              <div
-                                className="h-10 w-10 rounded-md flex items-center justify-center p-1 overflow-hidden relative bg-white"
-                                style={{
-                                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                                }}
-                              >
-                                <img
-                                  className="max-h-[85%] max-w-[85%] object-contain"
-                                  src={provider.logo}
-                                  alt={`${provider.name} logo`}
-                                  loading="eager"
-                                  onError={(e) => {
-                                    // Fall back to text logo on image load error
-                                    const target = e.target as HTMLImageElement;
-                                    target.style.display = "none";
-                                    const parent = target.parentElement;
-                                    if (parent) {
-                                      parent.style.backgroundColor =
-                                        getAccentColor(
-                                          provider.logoColor || "primary"
-                                        );
-                                      parent.innerHTML = `<span style="color: #ffffff; font-weight: bold;" class="text-sm">${
-                                        provider.logoText ||
-                                        provider.name
-                                          .substring(0, 2)
-                                          .toUpperCase()
-                                      }</span>`;
-                                    }
+              <p className="text-red-600 font-medium">
+                {t("rateTable.error")}
+              </p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => refetch()}
+                className="mt-2"
+              >
+                <i className="fas fa-redo mr-1"></i>
+                {t("rateTable.retry")}
+              </Button>
+            </div>
+          ) : (
+            <>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>{t("rateTable.columns.provider")}</TableHead>
+                      <TableHead className="text-right">
+                        {t("rateTable.columns.rate")}
+                      </TableHead>
+                      <TableHead className="text-right">
+                        {t("rateTable.columns.youGet")}
+                      </TableHead>
+                      <TableHead className="text-right">
+                        {t("rateTable.columns.fees")}
+                      </TableHead>
+                      <TableHead className="hidden md:table-cell">
+                        {t("rateTable.columns.transferTime")}
+                      </TableHead>
+                      <TableHead className="hidden md:table-cell">
+                        {t("rateTable.columns.rating")}
+                      </TableHead>
+                      <TableHead></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {displayedProviders.map((provider: any) => (
+                      <TableRow
+                        key={provider.id}
+                        className={
+                          provider.highlight
+                            ? "bg-blue-50 hover:bg-blue-100"
+                            : "hover:bg-gray-50"
+                        }
+                      >
+                        <TableCell>
+                          <div className="flex items-center">
+                            <div className="flex-shrink-0 h-10 w-10">
+                              {provider.logo ? (
+                                <div
+                                  className="h-10 w-10 rounded-md flex items-center justify-center p-1 overflow-hidden relative"
+                                  style={{
+                                    background: `linear-gradient(135deg, ${getAccentColor(
+                                      provider.logoColor || "primary",
+                                    )} 0%, #ffffff 100%)`,
+                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                                   }}
-                                />
-                              </div>
-                            ) : (
-                              <div
-                                className="h-10 w-10 rounded-md flex items-center justify-center text-white font-bold text-sm"
-                                style={{
-                                  backgroundColor: getAccentColor(
-                                    provider.logoColor || "primary"
-                                  ),
-                                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                                }}
-                              >
-                                {provider.logoText ||
-                                  provider.name.substring(0, 2).toUpperCase()}
-                              </div>
-                            )}
-                          </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900 flex items-center">
-                              {provider.name}
-                              {provider.badge && (
-                                <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                  {provider.badge}
-                                </span>
+                                >
+                                  <img
+                                    className="max-h-[85%] max-w-[85%] object-contain"
+                                    style={{
+                                      filter:
+                                        "drop-shadow(0px 1px 1px rgba(0,0,0,0.1))",
+                                      backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                      borderRadius: "4px",
+                                      padding: "4px",
+                                    }}
+                                    src={provider.logo}
+                                    alt={`${provider.name} logo`}
+                                    loading="eager"
+                                    onError={(e) => {
+                                      // Fall back to text logo on image load error
+                                      const target = e.target as HTMLImageElement;
+                                      target.style.display = "none";
+                                      const parent = target.parentElement;
+                                      if (parent) {
+                                        parent.style.background = getAccentColor(
+                                          provider.logoColor || "primary",
+                                        );
+                                        parent.innerHTML = `<span style="color: #ffffff; font-weight: bold;" class="text-lg">${
+                                          provider.logoText ||
+                                          provider.name.substring(0, 2).toUpperCase()
+                                        }</span>`;
+                                      }
+                                    }}
+                                  />
+                                </div>
+                              ) : (
+                                <div
+                                  className="h-10 w-10 rounded-md flex items-center justify-center text-white font-bold text-lg"
+                                  style={{
+                                    backgroundColor: getAccentColor(
+                                      provider.logoColor || "primary",
+                                    ),
+                                    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                                  }}
+                                >
+                                  {provider.logoText ||
+                                    provider.name.substring(0, 2).toUpperCase()}
+                                </div>
                               )}
                             </div>
-                            <div className="text-xs text-gray-500">
-                              {provider.type}
+                            <div className="ml-4">
+                              <div className="text-sm font-medium text-gray-900">
+                                {provider.name}
+                                {provider.badge && (
+                                  <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
+                                    {provider.badge}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                {provider.type}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm font-medium text-gray-900">
-                          1 SAR = {provider.rate.toFixed(2)} {selectedCurrency}
-                        </div>
-                        <div
-                          className={`text-xs font-medium ${
-                            provider.rateChange > 0
-                              ? "text-success-500"
-                              : provider.rateChange < 0
-                              ? "text-error-500"
-                              : "text-gray-500"
-                          }`}
-                        >
-                          <i
-                            className={`fas ${
-                              provider.rateChange > 0
-                                ? "fa-arrow-up"
-                                : provider.rateChange < 0
-                                ? "fa-arrow-down"
-                                : "fa-minus"
-                            }`}
-                          ></i>{" "}
-                          {Math.abs(provider.rateChange).toFixed(2)}%
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm font-medium text-gray-900">
-                          {(amount * provider.rate).toLocaleString()}{" "}
-                          {selectedCurrency}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {t("rateTable.for")} {amount.toLocaleString()} SAR
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm text-gray-900">
-                          {provider.fees === 0
-                            ? t("common.free")
-                            : `${provider.fees} SAR`}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          {provider.feeType}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm text-gray-900">
-                          {provider.transferTime}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {renderRatingStars(provider.rating)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <a
-                          href={provider.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary-600 hover:text-primary-800 font-medium"
-                        >
-                          {t("rateTable.transfer")}{" "}
-                          <i className="fas fa-external-link-alt ml-1 text-xs"></i>
-                        </a>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </div>
-        </Card>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="text-sm font-medium text-gray-900">
+                            {provider.rate.toFixed(4)}
+                          </div>
+                          <div className="text-xs flex items-center justify-end">
+                            {provider.rateChange > 0 ? (
+                              <span className="text-success-600">
+                                <i className="fas fa-arrow-up mr-1"></i>
+                                {provider.rateChange.toFixed(4)}
+                              </span>
+                            ) : provider.rateChange < 0 ? (
+                              <span className="text-red-600">
+                                <i className="fas fa-arrow-down mr-1"></i>
+                                {Math.abs(provider.rateChange).toFixed(4)}
+                              </span>
+                            ) : (
+                              <span className="text-gray-500">
+                                <i className="fas fa-minus mr-1"></i>
+                                {provider.rateChange.toFixed(4)}
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="text-sm font-medium text-gray-900">
+                            {(provider.rate * amount).toFixed(2)}{" "}
+                            {selectedCurrency}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            1 SAR = {provider.rate.toFixed(4)}{" "}
+                            {selectedCurrency}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="text-sm font-medium text-gray-900">
+                            {renderFees(provider)}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {provider.feeType}
+                          </div>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          <div className="text-sm font-medium text-gray-900">
+                            {provider.transferTime}
+                          </div>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {renderStarRating(provider.rating)}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <a
+                            href={provider.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                          >
+                            {t("rateTable.sendMoney")}{" "}
+                            <i className="fas fa-external-link-alt ml-1"></i>
+                          </a>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
 
-        {/* View More Button */}
-        {sortedRates.length > 5 && (
-          <div className="text-center">
-            <Button
-              variant="outline"
-              onClick={() => setShowAllProviders(!showAllProviders)}
-              className="inline-flex items-center"
-            >
-              {showAllProviders
-                ? t("rateTable.viewLess")
-                : t("rateTable.viewMore", { count: sortedRates.length })}
-              <i
-                className={`fas fa-chevron-${
-                  showAllProviders ? "up" : "down"
-                } ml-2`}
-              ></i>
-            </Button>
-          </div>
-        )}
+              {sortedRates.length > 5 && (
+                <div className="mt-4 text-center">
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowAllProviders(!showAllProviders)}
+                  >
+                    {showAllProviders
+                      ? t("rateTable.showLess")
+                      : t("rateTable.showMore", {
+                          count: sortedRates.length - 5,
+                        })}
+                  </Button>
+                </div>
+              )}
+
+              <div className="mt-4 text-xs text-gray-500 text-center">
+                {lastUpdated && (
+                  <p>
+                    {t("rateTable.lastUpdated")}:{" "}
+                    {new Date(lastUpdated).toLocaleString()}
+                  </p>
+                )}
+              </div>
+            </>
+          )}
+        </Card>
       </div>
     </section>
   );

@@ -6,13 +6,25 @@ import { useEffect } from "react";
 import HomePage from "@/pages/home";
 import CountryPage from "@/pages/country-page";
 import NotFound from "@/pages/not-found";
+
+// Admin pages
+import AdminLogin from "@/pages/admin/login";
+import AdminExchangeRates from "@/pages/admin/exchange-rates";
+
 import "./lib/i18n"; // Import i18n configuration
 
 function Router() {
   return (
     <Switch>
+      {/* Public routes */}
       <Route path="/" component={HomePage} />
       <Route path="/:countryCode" component={CountryPage} />
+      
+      {/* Admin routes */}
+      <Route path="/admin/login" component={AdminLogin} />
+      <Route path="/admin/exchange-rates" component={AdminExchangeRates} />
+      
+      {/* 404 route */}
       <Route component={NotFound} />
     </Switch>
   );

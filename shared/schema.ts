@@ -104,6 +104,28 @@ export interface ExchangeRateWithProvider extends z.infer<typeof selectExchangeR
   provider: z.infer<typeof selectProviderSchema>;
 }
 
+// Admin users table for managing the system
+export const admins = pgTable("admins", {
+  id: serial("id").primaryKey(),
+  username: text("username").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
+  fullName: text("full_name").notNull(),
+  email: text("email").notNull(),
+  role: text("role").default("editor"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  lastLogin: timestamp("last_login"),
+});
+
+export const insertAdminSchema = createInsertSchema(admins, {
+  username: (schema) => schema.min(3, "Username must be at least 3 characters"),
+  passwordHash: (schema) => schema.min(8, "Password must be at least 8 characters"),
+  fullName: (schema) => schema.min(2, "Full name must be at least 2 characters"),
+  email: (schema) => schema.email("Please enter a valid email address"),
+});
+
+export type InsertAdmin = z.infer<typeof insertAdminSchema>;
+export type Admin = typeof admins.$inferSelect;
+
 // Countries table for country-specific info
 export const countries = pgTable("countries", {
   id: serial("id").primaryKey(),
