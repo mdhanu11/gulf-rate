@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { languageNames } from '@/lib/i18n';
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import { languageNames } from "@/lib/i18n";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,9 +18,9 @@ const LanguageSwitcher: React.FC = () => {
   };
 
   // Get current language
-  const currentLanguage = i18n.language || 'en';
-  const currentLanguageCode = currentLanguage.split('-')[0];
-  const currentLanguageName = languageNames[currentLanguageCode] || 'English';
+  const currentLanguage = i18n.language || "en";
+  const currentLanguageCode = currentLanguage.split("-")[0];
+  const currentLanguageName = languageNames[currentLanguageCode] || "English";
 
   // Get language code in uppercase (e.g., 'EN', 'AR')
   const displayCode = currentLanguageCode.toUpperCase();
@@ -36,7 +36,9 @@ const LanguageSwitcher: React.FC = () => {
           <DropdownMenuItem
             key={code}
             className={`px-4 py-2 text-sm hover:bg-gray-100 ${
-              code === currentLanguageCode ? 'border-l-2 border-primary-500' : ''
+              code === currentLanguageCode
+                ? "border-l-2 border-primary-500"
+                : ""
             }`}
             onClick={() => changeLanguage(code)}
           >

@@ -27,6 +27,23 @@ const HomePage: React.FC = () => {
   const { t } = useTranslation();
   const isMobile = useMobile();
 
+  // Helper function for provider logo color
+  const getAccentColor = (color: string | undefined | null): string => {
+    const colors: Record<string, string> = {
+      primary: "#0070f3",
+      green: "#10b981",
+      yellow: "#f59e0b",
+      orange: "#f97316",
+      purple: "#8b5cf6",
+      blue: "#3b82f6",
+      indigo: "#6366f1",
+      teal: "#14b8a6",
+      red: "#ef4444",
+      pink: "#ec4899",
+    };
+    return colors[color || "primary"] || "#6b7280";
+  };
+
   // Benefits section data
   const benefits = [
     {
@@ -213,76 +230,123 @@ const HomePage: React.FC = () => {
       {/* Hero Section */}
       <section id="home" className="bg-gradient-primary text-white">
         <div className="container mx-auto px-4 py-12 md:py-20">
-          {/* Currency Quick Search */}
-          <Card className="mt-12 p-4 md:p-6">
-            <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4">
-              <div className="flex-1">
-                <label className="block text-gray-700 text-sm font-medium mb-1">
-                  {t("quickSearch.from")}
-                </label>
-                <div className="relative">
-                  <Select
-                    value={fromCurrency}
-                    onValueChange={setFromCurrency}
-                    disabled // Only SAR is available for now
-                  >
-                    <SelectTrigger className="pl-10">
-                      <SelectValue placeholder="SAR - Saudi Riyal" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="SAR">SAR - Saudi Riyal</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <span className="text-gray-500">SAR</span>
-                  </div>
+          {/* Banner with Provider Carousel */}
+          <Card className="mt-12 overflow-hidden shadow-lg">
+            <div className="relative bg-gradient-to-r from-blue-700 to-blue-900 text-white p-6">
+              <div className="relative z-10">
+                <h3 className="text-2xl font-bold mb-2 text-white">
+                  {t("hero.title")}
+                </h3>
+                <p className="text-blue-100 mb-6 max-w-2xl">
+                  {t("hero.subtitle")}
+                </p>
+              </div>
+              <div className="absolute right-0 bottom-0 opacity-10">
+                <svg
+                  width="200"
+                  height="200"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M14.31 8L20.05 17.94"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M9.69 8H21.17"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M7.38 12.00L13.12 2.06"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M2.75 17.94L8.49 8"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M6.44 17.94H17.92"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M16.62 12.00L10.88 21.94"
+                    stroke="white"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            <div className="p-6">
+              <div className="mb-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h4 className="text-lg font-semibold text-gray-700">
+                    {t("providers.title")}
+                  </h4>
+                </div>
+
+                <div className="flex overflow-x-auto pb-4 space-x-4 scrollbar-hide">
+                  {providers.map((provider) => (
+                    <a
+                      key={provider.id}
+                      href={provider.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-shrink-0 group"
+                      title={provider.name}
+                    >
+                      <div className="flex flex-col items-center">
+                        <div className="w-16 h-16 flex items-center justify-center rounded-lg bg-white shadow-md hover:shadow-lg transition p-2 border border-gray-100 group-hover:border-blue-200">
+                          <img
+                            src={provider.logo}
+                            alt={provider.name}
+                            className="max-w-full max-h-full object-contain"
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.src = `data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%23${
+                                provider.logoColor?.replace("#", "") || "6b7280"
+                              }" /><text x="50%" y="50%" font-family="Arial" font-size="36" text-anchor="middle" dominant-baseline="middle" fill="white">${provider.name.substring(
+                                0,
+                                2
+                              )}</text></svg>`;
+                            }}
+                          />
+                        </div>
+                        <span className="text-xs font-medium text-gray-700 mt-2 group-hover:text-blue-600">
+                          {provider.name}
+                        </span>
+                      </div>
+                    </a>
+                  ))}
                 </div>
               </div>
 
-              <div className="flex items-center justify-center">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-10 w-10 rounded-full bg-gray-100"
-                >
-                  <i className="fas fa-exchange-alt text-primary-500"></i>
-                </Button>
-              </div>
-
-              <div className="flex-1">
-                <label className="block text-gray-700 text-sm font-medium mb-1">
-                  {t("quickSearch.to")}
-                </label>
-                <div className="relative">
-                  <Select
-                    value={quickSearchCurrency}
-                    onValueChange={setQuickSearchCurrency}
-                  >
-                    <SelectTrigger className="pl-10">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {toCurrencies.map((currency) => (
-                        <SelectItem key={currency.value} value={currency.value}>
-                          {currency.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <span className="text-gray-500">{quickSearchCurrency}</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="md:ml-4">
-                <Button
-                  className="w-full md:w-auto"
-                  onClick={handleQuickSearch}
-                >
-                  {t("quickSearch.button")}
-                </Button>
-              </div>
+              {/* Currency selector removed as requested */}
             </div>
           </Card>
         </div>
@@ -322,133 +386,8 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Featured Providers Section */}
-      <section id="providers" className="py-12 bg-white">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 font-inter">
-              {t("providers.title")}
-            </h2>
-            <p className="mt-3 text-gray-600 max-w-2xl mx-auto">
-              {t("providers.subtitle")}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
-            {providers.map((provider) => (
-              <a
-                key={provider.id}
-                href={provider.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:shadow-md transition"
-              >
-                <div className="w-16 h-16 mb-3 flex items-center justify-center">
-                  {provider.logo ? (
-                    <div
-                      className="h-16 w-16 rounded-md flex items-center justify-center p-2 overflow-hidden relative bg-white"
-                      style={{
-                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                      }}
-                    >
-                      <img
-                        src={provider.logo}
-                        alt={`${provider.name} logo`}
-                        className="max-h-[85%] max-w-[85%] object-contain"
-                        loading="eager"
-                        onError={(e) => {
-                          // Fall back to text logo on image load error
-                          const target = e.target as HTMLImageElement;
-                          target.style.display = "none";
-                          const parent = target.parentElement;
-                          if (parent) {
-                            parent.style.backgroundColor = getAccentColor(
-                              provider.logoColor
-                            );
-                            parent.innerHTML = `<span style="color: #ffffff; font-weight: bold;" class="text-xl">${provider.name
-                              .substring(0, 2)
-                              .toUpperCase()}</span>`;
-                          }
-                        }}
-                      />
-                    </div>
-                  ) : (
-                    <div
-                      className="h-16 w-16 rounded-md flex items-center justify-center text-white font-bold text-xl"
-                      style={{
-                        backgroundColor: getAccentColor(provider.logoColor),
-                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                      }}
-                    >
-                      {provider.name.substring(0, 2).toUpperCase()}
-                    </div>
-                  )}
-                </div>
-                <h3 className="font-medium text-gray-900 text-center">
-                  {provider.name}
-                </h3>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Lead Capture Form */}
       <LeadCaptureForm />
-
-      {/* Country Specific Section */}
-      <section id="contact" className="py-12 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 font-inter">
-              {t("countries.title")}
-            </h2>
-            <p className="mt-3 text-gray-600 max-w-2xl mx-auto">
-              {t("countries.subtitle")}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {countries.map((country) => (
-              <Link
-                key={country.code}
-                href={`/${country.code}`}
-                className="bg-white rounded-lg shadow p-6 text-center hover:shadow-md transition flex flex-col items-center"
-              >
-                <div className="w-16 h-16 mb-4 flex items-center justify-center">
-                  {country.flag ? (
-                    <img
-                      src={country.flag}
-                      alt={country.name}
-                      className="w-16 h-16 rounded-full object-cover"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
-                      <i className="fas fa-flag text-2xl"></i>
-                    </div>
-                  )}
-                </div>
-                <h3 className="font-medium text-gray-900">{country.name}</h3>
-                <span
-                  className={`text-sm ${
-                    country.available ? "text-success-500" : "text-gray-500"
-                  } mt-1 flex items-center`}
-                >
-                  <i
-                    className={`fas ${
-                      country.available ? "fa-check-circle" : "fa-clock"
-                    } mr-1`}
-                  ></i>
-                  {country.available
-                    ? t("common.available")
-                    : t("common.comingSoon")}
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* FAQ Section */}
       <section className="py-12 bg-white">
@@ -502,39 +441,23 @@ const HomePage: React.FC = () => {
               <div className="text-sm font-medium text-gray-900">
                 {t("stickyCta.title")}
               </div>
-              <div className="text-xs text-gray-500">
-                {t("stickyCta.subtitle")}
-              </div>
+              <p className="text-xs text-gray-500">{t("stickyCta.subtitle")}</p>
             </div>
-            <a
-              href="#contact"
-              className="bg-primary-500 hover:bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium"
+            <Button
+              size="sm"
+              onClick={() =>
+                document
+                  .getElementById("alerts")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
             >
               {t("stickyCta.button")}
-            </a>
+            </Button>
           </div>
         </div>
       )}
     </>
   );
-};
-const getAccentColor = (logoColor: string): string => {
-  const colorMap: Record<string, string> = {
-    primary: "#0072C6", // Blue
-    green: "#10B981", // Green
-    yellow: "#F59E0B", // Yellow
-    orange: "#F97316", // Orange
-    purple: "#8B5CF6", // Purple
-    blue: "#3B82F6", // Medium Blue
-    indigo: "#6366F1", // Indigo
-    teal: "#14B8A6", // Teal
-    red: "#EF4444", // Red
-    pink: "#EC4899", // Pink
-    // Fallback to primary
-    default: "#0072C6",
-  };
-
-  return colorMap[logoColor] || colorMap.default;
 };
 
 export default HomePage;

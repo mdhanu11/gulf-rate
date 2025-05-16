@@ -65,6 +65,7 @@
     "transfer": "تحويل",
     "viewMore": "عرض جميع المزودين {{count}}",
     "viewLess": "عرض أقل",
+    "sendMoney": "إرسال الأموال",
     "filter": {
       "amount": "المبلغ",
       "currency": "العملة المستهدفة",

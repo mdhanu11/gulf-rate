@@ -65,6 +65,7 @@
     "transfer": "हस्तान्तरण",
     "viewMore": "सबै {{count}} प्रदायकहरू हेर्नुहोस्",
     "viewLess": "कम हेर्नुहोस्",
+    "sendMoney": "पैसा पठाउनुहोस्",
     "filter": {
       "amount": "रकम",
       "currency": "लक्षित मुद्रा",

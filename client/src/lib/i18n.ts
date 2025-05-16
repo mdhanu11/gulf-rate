@@ -81,7 +81,7 @@ i18n
       lookupCookie: "i18next",
       lookupLocalStorage: "i18nextLng",
       caches: ["localStorage", "cookie"],
-    }
+    },
   });
 
 // Function to update HTML dir attribute when language changes
@@ -89,10 +89,15 @@ export const handleLanguageChange = (language: string) => {
   const dir = languageDirections[language] || "ltr";
   document.documentElement.dir = dir;
   document.documentElement.lang = language;
-  
+
   // Apply appropriate font class
-  document.body.className = languageFonts[language] || "font-roboto";
-  
+  // Keep existing classes but replace only font classes
+  const existingClasses = document.body.className
+    .split(" ")
+    .filter((cls) => !cls.startsWith("font-"));
+  const newFontClass = languageFonts[language] || "font-roboto";
+  document.body.className = [...existingClasses, newFontClass].join(" ");
+
   // Set cookie for server-side rendering
   document.cookie = `i18next=${language}; path=/; max-age=31536000`;
 };

@@ -65,6 +65,7 @@
     "transfer": "ട്രാൻസ്ഫർ",
     "viewMore": "എല്ലാ {{count}} സേവനദാതാക്കളെയും കാണുക",
     "viewLess": "കുറച്ച് കാണുക",
+    "sendMoney": "പണം അയയ്ക്കുക",
     "filter": {
       "amount": "തുക",
       "currency": "ലക്ഷ്യ കറൻസി",

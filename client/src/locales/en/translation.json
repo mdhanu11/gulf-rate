@@ -36,7 +36,9 @@
   "quickSearch": {
     "from": "From",
     "to": "To",
-    "button": "Find Best Rates"
+    "button": "Find Best Rates",
+    "selectCurrency": "Select Currency",
+    "compareButton": "Compare Rates"
   },
   "benefits": {
     "title": "Why Use Gulf Rate?",
@@ -72,6 +74,7 @@
     "loading": "Loading rates...",
     "error": "Failed to load rates",
     "retry": "Try Again",
+    "noFees": "No Fees",
     "filter": {
       "amount": "Amount",
       "currency": "Target Currency",

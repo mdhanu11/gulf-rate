@@ -65,6 +65,7 @@
     "transfer": "ٹرانسفر",
     "viewMore": "تمام {{count}} فراہم کنندگان دیکھیں",
     "viewLess": "کم دیکھیں",
+    "sendMoney": "رقم بھیجیں",
     "filter": {
       "amount": "رقم",
       "currency": "مطلوبہ کرنسی",

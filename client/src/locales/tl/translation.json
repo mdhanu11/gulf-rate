@@ -65,6 +65,7 @@
     "transfer": "I-transfer",
     "viewMore": "Tingnan Lahat ng {{count}} Provider",
     "viewLess": "Tingnan ang Mas Kaunti",
+    "sendMoney": "Magpadala ng Pera",
     "filter": {
       "amount": "Halaga",
       "currency": "Target na Currency",

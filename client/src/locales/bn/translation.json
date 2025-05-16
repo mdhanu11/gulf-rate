@@ -65,6 +65,7 @@
     "transfer": "অর্থ প্রেরণ",
     "viewMore": "সব {{count}}টি প্রদানকারী দেখুন",
     "viewLess": "কম দেখুন",
+    "sendMoney": "টাকা পাঠান",
     "filter": {
       "amount": "পরিমাণ",
       "currency": "লক্ষ্য মুদ্রা",

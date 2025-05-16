@@ -65,6 +65,7 @@
     "transfer": "ट्रांसफर",
     "viewMore": "सभी {{count}} प्रदाताओं को देखें",
     "viewLess": "कम देखें",
+    "sendMoney": "पैसे भेजें",
     "filter": {
       "amount": "राशि",
       "currency": "लक्षित मुद्रा",

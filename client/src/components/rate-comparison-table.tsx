@@ -175,7 +175,8 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
     } else if (provider.feeType === "Variable fee") {
       return (
         <span>
-          {provider.fees} {t("rateTable.sar")} / {(provider.fees / amount * 100).toFixed(1)}%
+          {provider.fees} {t("rateTable.sar")} /{" "}
+          {((provider.fees / amount) * 100).toFixed(1)}%
         </span>
       );
     } else {
@@ -195,17 +196,13 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
 
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
-        stars.push(
-          <i key={i} className="fas fa-star text-yellow-400"></i>
-        );
+        stars.push(<i key={i} className="fas fa-star text-yellow-400"></i>);
       } else if (i === fullStars && hasHalfStar) {
         stars.push(
           <i key={i} className="fas fa-star-half-alt text-yellow-400"></i>
         );
       } else {
-        stars.push(
-          <i key={i} className="far fa-star text-gray-300"></i>
-        );
+        stars.push(<i key={i} className="far fa-star text-gray-300"></i>);
       }
     }
 
@@ -305,9 +302,7 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-500 mb-4">
                 <i className="fas fa-exclamation-triangle text-2xl"></i>
               </div>
-              <p className="text-red-600 font-medium">
-                {t("rateTable.error")}
-              </p>
+              <p className="text-red-600 font-medium">{t("rateTable.error")}</p>
               <Button
                 variant="outline"
                 size="sm"
@@ -361,7 +356,7 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
                                   className="h-10 w-10 rounded-md flex items-center justify-center p-1 overflow-hidden relative"
                                   style={{
                                     background: `linear-gradient(135deg, ${getAccentColor(
-                                      provider.logoColor || "primary",
+                                      provider.logoColor || "primary"
                                     )} 0%, #ffffff 100%)`,
                                     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                                   }}
@@ -371,7 +366,8 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
                                     style={{
                                       filter:
                                         "drop-shadow(0px 1px 1px rgba(0,0,0,0.1))",
-                                      backgroundColor: "rgba(255, 255, 255, 0.7)",
+                                      backgroundColor:
+                                        "rgba(255, 255, 255, 0.7)",
                                       borderRadius: "4px",
                                       padding: "4px",
                                     }}
@@ -379,17 +375,44 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
                                     alt={`${provider.name} logo`}
                                     loading="eager"
                                     onError={(e) => {
-                                      // Fall back to text logo on image load error
-                                      const target = e.target as HTMLImageElement;
+                                      // Try different file extensions before falling back to text
+                                      const target =
+                                        e.target as HTMLImageElement;
+                                      const originalSrc = target.src;
+
+                                      // If path ends with .png, try .jpeg
+                                      if (originalSrc.endsWith(".png")) {
+                                        const newSrc = originalSrc.replace(
+                                          ".png",
+                                          ".jpeg"
+                                        );
+                                        target.src = newSrc;
+                                        return;
+                                      }
+
+                                      // If path ends with .svg, try .jpeg
+                                      if (originalSrc.endsWith(".svg")) {
+                                        const newSrc = originalSrc.replace(
+                                          ".svg",
+                                          ".jpeg"
+                                        );
+                                        target.src = newSrc;
+                                        return;
+                                      }
+
+                                      // Final fallback to text logo
                                       target.style.display = "none";
                                       const parent = target.parentElement;
                                       if (parent) {
-                                        parent.style.background = getAccentColor(
-                                          provider.logoColor || "primary",
-                                        );
+                                        parent.style.background =
+                                          getAccentColor(
+                                            provider.logoColor || "primary"
+                                          );
                                         parent.innerHTML = `<span style="color: #ffffff; font-weight: bold;" class="text-lg">${
                                           provider.logoText ||
-                                          provider.name.substring(0, 2).toUpperCase()
+                                          provider.name
+                                            .substring(0, 2)
+                                            .toUpperCase()
                                         }</span>`;
                                       }
                                     }}
@@ -400,7 +423,7 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
                                   className="h-10 w-10 rounded-md flex items-center justify-center text-white font-bold text-lg"
                                   style={{
                                     backgroundColor: getAccentColor(
-                                      provider.logoColor || "primary",
+                                      provider.logoColor || "primary"
                                     ),
                                     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                                   }}
@@ -479,10 +502,16 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
                             href={provider.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                            className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md border border-blue-500 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            style={{ color: "#ffffff", fontWeight: "bold" }}
                           >
-                            {t("rateTable.sendMoney")}{" "}
-                            <i className="fas fa-external-link-alt ml-1"></i>
+                            <span style={{ color: "#ffffff" }}>
+                              {t("rateTable.sendMoney")}
+                            </span>{" "}
+                            <i
+                              className="fas fa-external-link-alt ml-1"
+                              style={{ color: "#ffffff" }}
+                            ></i>
                           </a>
                         </TableCell>
                       </TableRow>

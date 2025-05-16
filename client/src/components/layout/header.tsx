@@ -38,7 +38,6 @@ const Header: React.FC = () => {
 
   const navLinks: NavLink[] = [
     { href: "#home", label: t("nav.home"), bind: "home" },
-    { href: "#providers", label: t("nav.providers"), bind: "providers" },
     { href: "#compare", label: t("nav.compare"), bind: "compare" },
     { href: "#alerts", label: t("nav.alerts"), bind: "alerts" },
     // { href: "#contact", label: t("nav.contact"), bind: "contact" },
@@ -50,7 +49,7 @@ const Header: React.FC = () => {
 
   const handleSmoothScroll = (
     e: React.MouseEvent<HTMLAnchorElement>,
-    href: string,
+    href: string
   ) => {
     e.preventDefault();
 
