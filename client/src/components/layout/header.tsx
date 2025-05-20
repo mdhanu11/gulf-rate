@@ -49,7 +49,7 @@ const Header: React.FC = () => {
 
   const handleSmoothScroll = (
     e: React.MouseEvent<HTMLAnchorElement>,
-    href: string
+    href: string,
   ) => {
     e.preventDefault();
 
@@ -79,9 +79,8 @@ const Header: React.FC = () => {
         <div className="flex justify-between items-center py-3">
           <div className="flex items-center">
             <Link
-              href="#home"
+              href="/"
               className="flex items-center"
-              onClick={(e) => handleSmoothScroll(e, "#home")}
             >
               <div className="mr-2 h-9 w-9 rounded-md bg-gradient-to-r from-primary to-primary/80 flex items-center justify-center text-white font-bold shadow-md">
                 <span className="text-lg">GR</span>
@@ -106,9 +105,13 @@ const Header: React.FC = () => {
             ))}
           </nav>
 
-          <div className="flex items-center space-x-3">
-            <CountrySelector />
-            <LanguageSwitcher />
+          <div className="flex items-center space-x-4">
+            <div className="mx-1">
+              <CountrySelector />
+            </div>
+            <div className="mx-1">
+              <LanguageSwitcher />
+            </div>
 
             <button
               className="md:hidden text-gray-600 focus:outline-none"

@@ -33,6 +33,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Search, Edit, Filter, RefreshCcw } from "lucide-react";
 import axios from "axios";
 
 // Form schema for exchange rate update/creation
@@ -55,6 +56,7 @@ export default function AdminExchangeRates() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [editingRateId, setEditingRateId] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   
   // Fetch all providers
   const { data: providers = [] } = useQuery({
@@ -66,7 +68,7 @@ export default function AdminExchangeRates() {
   });
   
   // Fetch all exchange rates
-  const { data: rates = [], isLoading } = useQuery({
+  const { data: rates = [], isLoading, refetch } = useQuery({
     queryKey: ["/api/admin/exchange-rates"],
     queryFn: async () => {
       const response = await axios.get("/api/admin/exchange-rates");
@@ -200,11 +202,46 @@ export default function AdminExchangeRates() {
       highlight: false,
     });
   }
+
+  // Filter rates by search query
+  const filteredRates = rates?.filter((rate: any) => {
+    if (!searchQuery) return true;
+    
+    const provider = providers.find((p: any) => p.id === rate.providerId);
+    const providerName = provider?.name || '';
+    
+    return (
+      providerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      rate.toCurrency.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
   
   return (
     <AdminLayout>
-      <div className="container mx-auto px-4">
-        <h1 className="text-2xl font-bold mb-6">Manage Exchange Rates</h1>
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Manage Exchange Rates</h1>
+          <Button 
+            onClick={() => refetch()}
+            variant="outline"
+            className="gap-2"
+          >
+            <RefreshCcw size={16} />
+            Refresh
+          </Button>
+        </div>
+
+        <div className="mb-6 flex justify-between items-center">
+          <div className="relative w-full md:w-1/3">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+            <Input
+              placeholder="Search providers or currencies"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+        </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Exchange Rates Table */}
@@ -234,47 +271,81 @@ export default function AdminExchangeRates() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {rates?.length > 0 ? (
-                          rates.map((rate: any) => (
-                            <TableRow key={rate.id}>
-                              <TableCell>{rate.provider?.name || 'Unknown'}</TableCell>
-                              <TableCell>
-                                {rate.fromCurrency} → {rate.toCurrency}
-                              </TableCell>
-                              <TableCell>{parseFloat(rate.rate).toFixed(4)}</TableCell>
-                              <TableCell 
-                                className={
-                                  parseFloat(rate.rateChange) > 0 
-                                    ? "text-green-600" 
-                                    : parseFloat(rate.rateChange) < 0 
-                                    ? "text-red-600" 
-                                    : ""
-                                }
-                              >
-                                {parseFloat(rate.rateChange) > 0 ? "+" : ""}
-                                {parseFloat(rate.rateChange).toFixed(4)}
-                              </TableCell>
-                              <TableCell>
-                                {parseFloat(rate.fees).toFixed(2)} ({rate.feeType})
-                              </TableCell>
-                              <TableCell>
-                                {new Date(rate.lastUpdated).toLocaleString()}
-                              </TableCell>
-                              <TableCell>
-                                <Button 
-                                  variant="outline" 
-                                  size="sm"
-                                  onClick={() => editRate(rate)}
+                        {filteredRates.length > 0 ? (
+                          filteredRates.map((rate: any) => {
+                            const provider = providers.find((p: any) => p.id === rate.providerId);
+                            return (
+                              <TableRow key={rate.id}>
+                                <TableCell>
+                                  <div className="flex items-center gap-2">
+                                    <div className="h-8 w-8 rounded-md bg-gray-100 overflow-hidden flex-shrink-0">
+                                      {provider?.logo && (
+                                        <img
+                                          src={provider.logo.startsWith('http') 
+                                            ? provider.logo 
+                                            : `/images/providers/${provider.providerKey}.jpeg`}
+                                          alt={provider?.name || ''}
+                                          className="h-full w-full object-contain"
+                                          onError={(e) => {
+                                            const target = e.currentTarget;
+                                            target.onerror = null;
+                                            
+                                            // Try different formats
+                                            if (target.src.includes('.jpeg')) {
+                                              target.src = `/images/providers/${provider.providerKey}.png`;
+                                            } else if (target.src.includes('.png')) {
+                                              target.src = `/images/providers/${provider.providerKey}.svg`;
+                                            } else {
+                                              target.style.display = "none";
+                                            }
+                                          }}
+                                        />
+                                      )}
+                                    </div>
+                                    <span>{provider?.name || 'Unknown'}</span>
+                                  </div>
+                                </TableCell>
+                                <TableCell>
+                                  {rate.fromCurrency} → {rate.toCurrency}
+                                </TableCell>
+                                <TableCell className="font-mono">{parseFloat(rate.rate).toFixed(4)}</TableCell>
+                                <TableCell 
+                                  className={
+                                    parseFloat(rate.rateChange) > 0 
+                                      ? "text-green-600 font-mono" 
+                                      : parseFloat(rate.rateChange) < 0 
+                                      ? "text-red-600 font-mono" 
+                                      : "font-mono"
+                                  }
                                 >
-                                  Edit
-                                </Button>
-                              </TableCell>
-                            </TableRow>
-                          ))
+                                  {parseFloat(rate.rateChange) > 0 ? "+" : ""}
+                                  {parseFloat(rate.rateChange).toFixed(4)}
+                                </TableCell>
+                                <TableCell>
+                                  <div className="font-mono">{parseFloat(rate.fees).toFixed(2)}</div>
+                                  <div className="text-xs text-gray-500">{rate.feeType}</div>
+                                </TableCell>
+                                <TableCell>
+                                  {new Date(rate.lastUpdated).toLocaleDateString()}
+                                </TableCell>
+                                <TableCell>
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm"
+                                    onClick={() => editRate(rate)}
+                                    className="flex items-center gap-1"
+                                  >
+                                    <Edit size={14} />
+                                    Edit
+                                  </Button>
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })
                         ) : (
                           <TableRow>
                             <TableCell colSpan={7} className="text-center py-4">
-                              No exchange rates found
+                              {searchQuery ? "No matching exchange rates found" : "No exchange rates found"}
                             </TableCell>
                           </TableRow>
                         )}
@@ -304,8 +375,8 @@ export default function AdminExchangeRates() {
                         <FormItem>
                           <FormLabel>Provider</FormLabel>
                           <Select 
-                            value={field.value.toString()} 
-                            onValueChange={(value) => field.onChange(parseInt(value))}
+                            value={field.value?.toString() || ""} 
+                            onValueChange={(value) => value ? field.onChange(parseInt(value)) : field.onChange(0)}
                           >
                             <FormControl>
                               <SelectTrigger>
@@ -315,7 +386,24 @@ export default function AdminExchangeRates() {
                             <SelectContent>
                               {providers.map((provider: any) => (
                                 <SelectItem key={provider.id} value={provider.id.toString()}>
-                                  {provider.name}
+                                  <div className="flex items-center gap-2">
+                                    <div className="h-5 w-5 rounded-md bg-gray-100 overflow-hidden flex-shrink-0">
+                                      {provider.logo && (
+                                        <img
+                                          src={provider.logo.startsWith('http') 
+                                            ? provider.logo 
+                                            : `/images/providers/${provider.providerKey}.jpeg`}
+                                          alt={provider.name}
+                                          className="h-full w-full object-contain"
+                                          onError={(e) => {
+                                            const target = e.currentTarget;
+                                            target.onerror = null;
+                                          }}
+                                        />
+                                      )}
+                                    </div>
+                                    <span>{provider.name}</span>
+                                  </div>
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -471,23 +559,26 @@ export default function AdminExchangeRates() {
                           <div className="space-y-1 leading-none">
                             <FormLabel>Highlight this rate</FormLabel>
                             <FormDescription>
-                              The highlighted rate will be shown more prominently to users
+                              The highlighted rate will be shown more prominently to users.
                             </FormDescription>
                           </div>
                         </FormItem>
                       )}
                     />
                     
-                    <div className="flex justify-between">
+                    <div className="flex justify-between pt-2">
+                      {editingRateId && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={cancelEdit}
+                        >
+                          Cancel
+                        </Button>
+                      )}
                       <Button
-                        type="button"
-                        variant="outline"
-                        onClick={cancelEdit}
-                      >
-                        Cancel
-                      </Button>
-                      <Button 
                         type="submit"
+                        className={editingRateId ? "" : "ml-auto"}
                         disabled={updateRateMutation.isPending || createRateMutation.isPending}
                       >
                         {editingRateId ? "Update Rate" : "Add New Rate"}

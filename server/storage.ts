@@ -170,5 +170,61 @@ export const storage = {
       console.error("Error getting countries:", error);
       throw error;
     }
+  },
+  
+  // Get all providers
+  async getProviders() {
+    try {
+      return await db.query.providers.findMany({
+        orderBy: [
+          desc(providers.active),
+          providers.sortOrder,
+          providers.name,
+        ],
+      });
+    } catch (error) {
+      console.error("Error getting providers:", error);
+      throw error;
+    }
+  },
+  
+  // Get providers by country
+  async getProvidersByCountry(countryCode: string) {
+    try {
+      return await db.query.providers.findMany({
+        where: and(
+          eq(providers.countryCode, countryCode.toLowerCase()),
+          eq(providers.active, true)
+        ),
+        orderBy: providers.sortOrder,
+      });
+    } catch (error) {
+      console.error(`Error getting providers for country ${countryCode}:`, error);
+      throw error;
+    }
+  },
+  
+  // Get available currencies for a country
+  async getAvailableCurrencies(countryCode: string) {
+    try {
+      const results = await db.select({
+        toCurrency: exchangeRates.toCurrency
+      })
+      .from(exchangeRates)
+      .innerJoin(
+        providers,
+        and(
+          eq(exchangeRates.providerId, providers.id),
+          eq(providers.countryCode, countryCode.toLowerCase()),
+          eq(providers.active, true)
+        )
+      )
+      .groupBy(exchangeRates.toCurrency);
+      
+      return results.map(result => result.toCurrency);
+    } catch (error) {
+      console.error(`Error getting currencies for country ${countryCode}:`, error);
+      throw error;
+    }
   }
 };

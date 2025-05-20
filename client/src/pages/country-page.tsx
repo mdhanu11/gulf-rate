@@ -6,8 +6,11 @@ import Footer from '@/components/layout/footer';
 import RateComparisonTable from '@/components/rate-comparison-table';
 import LeadCaptureForm from '@/components/lead-capture-form';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { useMobile } from '@/hooks/use-mobile';
 import { Helmet } from 'react-helmet';
+import { useProvidersByCountry } from '@/hooks/use-providers';
+import { useLocalizedProviderNames } from '@/hooks/use-localized-provider-names';
 
 // Hero images for different countries
 const countryImages: Record<string, string> = {
@@ -30,6 +33,7 @@ interface CountryPageProps {}
 const CountryPage: React.FC<CountryPageProps> = () => {
   const { t } = useTranslation();
   const isMobile = useMobile();
+  const { getLocalizedName } = useLocalizedProviderNames();
   const { countryCode } = useParams<{ countryCode: string }>();
   
   // Redirect to homepage if country code is invalid
@@ -40,6 +44,26 @@ const CountryPage: React.FC<CountryPageProps> = () => {
   const normalizedCountryCode = countryCode.toLowerCase();
   const isAvailable = availableCountries.includes(normalizedCountryCode);
   const heroImage = countryImages[normalizedCountryCode] || countryImages.sa;
+  
+  // Fetch providers for the selected country
+  const { providers, isLoading: isLoadingProviders } = useProvidersByCountry(normalizedCountryCode);
+  
+  // Helper function for provider logo color
+  const getAccentColor = (color: string | undefined | null): string => {
+    const colors: Record<string, string> = {
+      primary: "#0070f3",
+      green: "#10b981",
+      yellow: "#f59e0b",
+      orange: "#f97316",
+      purple: "#8b5cf6",
+      blue: "#3b82f6",
+      indigo: "#6366f1",
+      teal: "#14b8a6",
+      red: "#ef4444",
+      pink: "#ec4899",
+    };
+    return colors[color || "primary"] || "#6b7280";
+  };
 
   // Country-specific content
   const countryName = t(`countries.${normalizedCountryCode}`);
@@ -69,72 +93,133 @@ const CountryPage: React.FC<CountryPageProps> = () => {
       
       <Header />
       
-      {/* Hero Section */}
-      <section 
-        className="bg-gradient-primary text-white py-16 md:py-24"
-        style={{ 
-          backgroundImage: `linear-gradient(to right, rgba(15, 82, 186, 0.9), rgba(9, 49, 140, 0.9)), url(${heroImage})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-        }}
-      >
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl">
-            <h1 className="text-3xl md:text-5xl font-bold mb-4 font-inter">
-              {pageTitle}
-            </h1>
-            <p className="text-lg opacity-90 mb-6">
-              {t('countryPage.subtitle', { country: countryName })}
-            </p>
-            
-            {isAvailable ? (
-              <div className="flex flex-wrap gap-3">
-                <a 
-                  href="#compare" 
-                  className="bg-secondary-500 hover:bg-secondary-400 text-gray-900 px-6 py-3 rounded-lg font-medium inline-flex items-center transition"
-                >
-                  <i className="fas fa-exchange-alt mr-2"></i>
-                  <span>{t('hero.cta.compare')}</span>
-                </a>
-                <a 
-                  href="#contact" 
-                  className="bg-white hover:bg-gray-100 text-primary-700 px-6 py-3 rounded-lg font-medium inline-flex items-center transition"
-                >
-                  <i className="fas fa-bell mr-2"></i>
-                  <span>{t('hero.cta.alerts')}</span>
-                </a>
-              </div>
-            ) : (
-              <div>
-                <div className="mb-4 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                  <i className="fas fa-clock mr-1"></i>
-                  {t('common.comingSoon')}
-                </div>
-                <p className="mb-6">
-                  {t('countryPage.comingSoonMessage', { country: countryName })}
-                </p>
-                <form className="flex max-w-md">
-                  <input 
-                    type="email" 
-                    placeholder={t('countryPage.enterEmail')} 
-                    className="flex-1 px-4 py-2 rounded-l-lg border-0 focus:outline-none focus:ring-2 focus:ring-secondary-500"
-                  />
-                  <Button 
-                    type="submit" 
-                    className="rounded-l-none bg-secondary-500 hover:bg-secondary-400 text-gray-900"
-                  >
-                    {t('countryPage.notifyMe')}
-                  </Button>
-                </form>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
-      
       {isAvailable ? (
         // Show full content for available countries
         <>
+          {/* Provider Banner */}
+          <section className="bg-white pt-4 pb-2">
+            <div className="container mx-auto px-4">
+              <Card className="overflow-hidden shadow-lg">
+                <div className="relative bg-gradient-to-r from-blue-700 to-blue-900 text-white p-6">
+                  <div className="relative z-10">
+                    <h3 className="text-2xl font-bold mb-2 text-white">
+                      {t("hero.title")}
+                    </h3>
+                    <p className="text-blue-100 mb-6 max-w-2xl">
+                      {t("hero.subtitle")}
+                    </p>
+                  </div>
+                  <div className="absolute right-0 bottom-0 opacity-10">
+                    <svg width="200" height="200" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M14.31 8L20.05 17.94" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M9.69 8H21.17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M7.38 12.00L13.12 2.06" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M2.75 17.94L8.49 8" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M6.44 17.94H17.92" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      <path d="M16.62 12.00L10.88 21.94" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                </div>
+                
+                <div className="p-6">
+                  <div className="mb-6">
+                    <div className="flex flex-col mb-4">
+                      <div className="flex justify-between items-center">
+                        <h4 className="text-lg font-semibold text-gray-700">{t("providers.title")}</h4>
+                        <div className="text-sm text-gray-500">
+                          {!isLoadingProviders && t("rateTable.lastUpdated") + ": " + new Date().toLocaleDateString()}
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {t("providers.subtitle")} {providers.length > 0 && `(${t("providers.availableProviders", { count: providers.length })})`}
+                      </p>
+                    </div>
+                    
+                    {isLoadingProviders ? (
+                      <div className="flex justify-center items-center py-8">
+                        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+                        <p className="ml-3 text-gray-600">{t("common.loading")}</p>
+                      </div>
+                    ) : (
+                      <div className="flex overflow-x-auto pb-4 space-x-4 scrollbar-hide">
+                        {providers.map((provider) => (
+                          <a 
+                            key={provider.id}
+                            href={provider.url}
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="flex-shrink-0 group"
+                            title={provider.name}
+                            onClick={() => {
+                              // Track provider click event
+                              if (window.gtag) {
+                                window.gtag('event', 'provider_click', {
+                                  event_category: 'engagement',
+                                  event_label: provider.name
+                                });
+                              }
+                            }}
+                          >
+                            <div className="flex flex-col items-center">
+                              <div className="w-16 h-16 flex items-center justify-center rounded-lg bg-white shadow-md hover:shadow-lg transition p-2 border border-gray-100 group-hover:border-blue-200">
+                                {provider.logo ? (
+                                  <img 
+                                    src={provider.logo && provider.logo.startsWith('http') 
+                                      ? provider.logo 
+                                      : `/images/providers/${provider.providerKey}.jpeg`}
+                                    alt={provider.name}
+                                    className="max-w-full max-h-full object-contain"
+                                    onError={(e) => {
+                                      const target = e.currentTarget;
+                                      target.onerror = null;
+                                      
+                                      // Try different formats
+                                      if (target.src.includes('.jpeg')) {
+                                        target.src = `/images/providers/${provider.providerKey}.png`;
+                                      } else if (target.src.includes('.png')) {
+                                        target.src = `/images/providers/${provider.providerKey}.svg`;
+                                      } else {
+                                        // Final fallback to text representation
+                                        target.style.display = "none";
+                                        const parent = target.parentElement;
+                                        if (parent) {
+                                          parent.style.background = getAccentColor(
+                                            provider.logoColor || "primary"
+                                          );
+                                          parent.innerHTML = `<span style="color: #ffffff; font-weight: bold;" class="text-lg">${
+                                            provider.logoText ||
+                                            provider.name.substring(0, 2).toUpperCase()
+                                          }</span>`;
+                                        }
+                                      }
+                                    }}
+                                  />
+                                ) : (
+                                  <div 
+                                    className="w-full h-full flex items-center justify-center rounded" 
+                                    style={{ backgroundColor: getAccentColor(provider.logoColor as string) }}
+                                  >
+                                    <span className="text-white font-bold text-lg">
+                                      {provider.logoText || provider.name.substring(0, 2).toUpperCase()}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                              <span className="text-xs font-medium text-gray-700 mt-2 group-hover:text-blue-600">
+                                {getLocalizedName(provider.providerKey, provider.name)}
+                              </span>
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </Card>
+            </div>
+          </section>
+          
           {/* Currency Comparison Table */}
           <RateComparisonTable countryCode={normalizedCountryCode} />
           

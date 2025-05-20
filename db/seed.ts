@@ -345,6 +345,30 @@ async function seed() {
       }
     }
 
+    // Add default admin user if it doesn't exist
+    console.log("Checking for default admin user...");
+    const existingAdmin = await db.query.admins.findFirst({
+      where: (a) => eq(a.username, "admin")
+    });
+
+    if (!existingAdmin) {
+      // Generate a hash for the default password "admin123"
+      const crypto = require('crypto');
+      const salt = crypto.randomBytes(16).toString('hex');
+      const hash = crypto.scryptSync('admin123', salt, 64).toString('hex') + '.' + salt;
+      
+      await db.insert(schema.admins).values({
+        username: "admin",
+        passwordHash: hash,
+        fullName: "System Administrator",
+        email: "admin@gulfrate.com",
+        role: "admin",
+      });
+      console.log("Added default admin user (username: admin, password: admin123)");
+    } else {
+      console.log("Default admin user already exists");
+    }
+
     console.log("Database seeding completed successfully!");
   } catch (error) {
     console.error("Error during database seeding:", error);

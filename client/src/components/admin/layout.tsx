@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import axios from "axios";
+import { useAdminAuth } from "@/hooks/use-admin-auth";
+import { Loader2 } from "lucide-react";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -11,27 +12,52 @@ interface AdminLayoutProps {
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const [location, setLocation] = useLocation();
   const { toast } = useToast();
+  const { isAuthenticated, logout, isLoading, checkAuth } = useAdminAuth();
+  
+  // Check authentication on mount
+  useEffect(() => {
+    const verifyAuth = async () => {
+      const authenticated = await checkAuth();
+      if (!authenticated) {
+        toast({
+          title: "Authentication required",
+          description: "Please login to access the admin area",
+        });
+        setLocation("/admin/login");
+      }
+    };
+    
+    verifyAuth();
+  }, [checkAuth, setLocation, toast]);
   
   // Handle logout
   const handleLogout = async () => {
     try {
-      await axios.post("/api/admin/logout");
-      toast({
-        title: "Logged out",
-        description: "You have been logged out successfully.",
-      });
-      setLocation("/admin/login");
+      await logout();
+      // The logout function in useAdminAuth will handle redirect and toast
     } catch (error) {
-      toast({
-        title: "Logout failed",
-        description: "There was an error during logout.",
-        variant: "destructive",
-      });
+      // Error handling is done in the useAdminAuth hook
     }
   };
   
+  // If still checking authentication, show loading state
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-2">Verifying authentication...</span>
+      </div>
+    );
+  }
+  
+  // If not authenticated, don't render admin layout
+  if (!isAuthenticated) {
+    return null;
+  }
+  
   // Navigation items
   const navItems = [
+    { href: "/admin/quick-update", label: "Quick Rate Update" },
     { href: "/admin/exchange-rates", label: "Exchange Rates" },
     { href: "/admin/providers", label: "Providers" }
   ];
@@ -41,22 +67,22 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       <nav className="bg-white shadow">
         <div className="container mx-auto px-4">
           <div className="flex justify-between h-16">
-            <div className="flex">
+            <div className="flex items-center">
               <div className="flex-shrink-0 flex items-center">
                 <Link href="/admin/exchange-rates">
-                  <span className="text-xl font-bold text-primary-600 cursor-pointer">
+                  <span className="text-xl font-bold text-primary cursor-pointer">
                     Gulf Rate Admin
                   </span>
                 </Link>
               </div>
-              <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+              <div className="ml-6 flex space-x-4">
                 {navItems.map((item) => (
                   <Link href={item.href} key={item.href}>
                     <span
-                      className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium cursor-pointer ${
+                      className={`inline-flex items-center px-3 py-2 rounded-md text-sm font-medium cursor-pointer ${
                         location === item.href
-                          ? "border-primary-500 text-gray-900"
-                          : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                          ? "bg-primary text-white"
+                          : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                       }`}
                     >
                       {item.label}
@@ -65,8 +91,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 ))}
               </div>
             </div>
-            <div className="hidden sm:ml-6 sm:flex sm:items-center">
-              <Button variant="ghost" onClick={handleLogout}>
+            <div className="flex items-center">
+              <Button variant="outline" onClick={handleLogout}>
                 Logout
               </Button>
             </div>

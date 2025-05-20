@@ -63,9 +63,15 @@
     "sortBy": "ترتيب حسب",
     "for": "مقابل",
     "transfer": "تحويل",
+    "feeTypes": {
+      "fixed": "رسوم ثابتة",
+      "variable": "رسوم متغيرة"
+    },
     "viewMore": "عرض جميع المزودين {{count}}",
     "viewLess": "عرض أقل",
     "sendMoney": "إرسال الأموال",
+    "showMore": "عرض المزيد من المزودين",
+    "showLess": "عرض أقل",
     "filter": {
       "amount": "المبلغ",
       "currency": "العملة المستهدفة",
@@ -83,12 +89,28 @@
     "sortOptions": {
       "bestRate": "أفضل سعر",
       "lowestFees": "أقل رسوم",
-      "userRating": "تقييم المستخدمين"
+      "userRating": "تقييم المستخدمين",
+      "highestRated": "أعلى تقييماً"
     }
   },
   "providers": {
     "title": "مزودي خدمة الصرف الموثوقين",
-    "subtitle": "نتعاون مع أكثر خدمات تحويل الأموال موثوقية في المملكة العربية السعودية"
+    "subtitle": "نتعاون مع أكثر خدمات تحويل الأموال موثوقية في المملكة العربية السعودية",
+    "availableProviders": "{{count}} مزود متاح"
+  },
+  "providerTypes": {
+    "digital_transfer": "تحويل رقمي",
+    "cash_pickup": "استلام نقدي",
+    "digital_wallet": "محفظة رقمية",
+    "bank_transfer": "تحويل بنكي",
+    "mobile_wallet": "محفظة جوال"
+  },
+  "feeTypeLabels": {
+    "fixed_fee": "رسوم ثابتة",
+    "variable_fee": "رسوم متغيرة"
+  },
+  "badges": {
+    "best_rate": "أفضل سعر"
   },
   "alerts": {
     "title": "احصل على إشعارات حول أفضل أسعار الصرف",

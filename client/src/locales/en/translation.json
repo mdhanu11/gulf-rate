@@ -75,6 +75,10 @@
     "error": "Failed to load rates",
     "retry": "Try Again",
     "noFees": "No Fees",
+    "feeTypes": {
+      "fixed": "Fixed fee",
+      "variable": "Variable fee"
+    },
     "filter": {
       "amount": "Amount",
       "currency": "Target Currency",
@@ -98,7 +102,15 @@
   },
   "providers": {
     "title": "Our Trusted Exchange Providers",
-    "subtitle": "We partner with the most reliable money transfer services in Saudi Arabia"
+    "subtitle": "We partner with the most reliable money transfer services in Saudi Arabia",
+    "availableProviders": "{{count}} providers available"
+  },
+  "providerTypes": {
+    "digital_transfer": "Digital Transfer",
+    "cash_pickup": "Cash Pickup",
+    "digital_wallet": "Digital Wallet",
+    "bank_transfer": "Bank Transfer",
+    "mobile_wallet": "Mobile Wallet"
   },
   "alerts": {
     "title": "Get Notified About the Best Exchange Rates",

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Table,
@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useLocalizedProviderNames } from "@/hooks/use-localized-provider-names";
 import {
   Select,
   SelectContent,
@@ -19,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useExchangeRates } from "@/hooks/use-exchange-rates";
+import { useAvailableCurrencies, type CurrencyOption } from "@/hooks/use-currencies";
 
 interface SortOption {
   key: "rate" | "fees" | "rating";
@@ -54,6 +56,7 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
   countryCode,
 }) => {
   const { t } = useTranslation();
+  const { getLocalizedName } = useLocalizedProviderNames();
   const [amount, setAmount] = useState<number>(1000);
   const [selectedCurrency, setSelectedCurrency] = useState<string>("INR");
   const [sortOption, setSortOption] = useState<SortOption>({
@@ -72,40 +75,46 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
     lastUpdated,
   } = useExchangeRates(countryCode, selectedCurrency);
 
-  // Sort options for the rate comparison table
+  // Sort options for the rate comparison table - using translated labels
   const sortOptions: SortOption[] = [
     {
       key: "rate",
       direction: "desc",
       label: t("rateTable.sortOptions.bestRate"),
-      icon: "fa-sort-amount-up",
+      icon: "sort-asc", // Just a reference identifier for path selection
     },
     {
       key: "fees",
       direction: "asc",
       label: t("rateTable.sortOptions.lowestFees"),
-      icon: "fa-sort-amount-down",
+      icon: "sort-desc", // Just a reference identifier for path selection
     },
     {
       key: "rating",
       direction: "desc",
       label: t("rateTable.sortOptions.highestRated"),
-      icon: "fa-sort-amount-up",
+      icon: "star", // Just a reference identifier for path selection
     },
   ];
+  
+  // Update sort options when language changes
+  useEffect(() => {
+    setSortOption(prev => ({
+      ...prev,
+      label: t(`rateTable.sortOptions.${prev.key === 'rate' ? 'bestRate' : prev.key === 'fees' ? 'lowestFees' : 'highestRated'}`)
+    }));
+  }, [t]);
 
-  // Currencies for quick search
-  const currencies = [
+  // Get currencies from database using our hook
+  const { currencyOptions, isLoading: isLoadingCurrencies } = useAvailableCurrencies(countryCode);
+  
+  // Fallback to common currencies when data is loading or no currencies are returned from API
+  const currencies = currencyOptions.length > 0 ? currencyOptions : [
     { value: "INR", label: "INR - Indian Rupee" },
     { value: "PKR", label: "PKR - Pakistani Rupee" },
     { value: "PHP", label: "PHP - Philippine Peso" },
     { value: "BDT", label: "BDT - Bangladeshi Taka" },
     { value: "NPR", label: "NPR - Nepalese Rupee" },
-    { value: "EGP", label: "EGP - Egyptian Pound" },
-    { value: "LKR", label: "LKR - Sri Lankan Rupee" },
-    { value: "USD", label: "USD - US Dollar" },
-    { value: "GBP", label: "GBP - British Pound" },
-    { value: "EUR", label: "EUR - Euro" },
   ];
 
   // Handle sorting of providers based on the selected sort option
@@ -136,6 +145,14 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
   // Handle changing the currency selection
   const handleCurrencyChange = (currency: string) => {
     setSelectedCurrency(currency);
+    
+    // Track currency change in analytics
+    if (window.gtag) {
+      window.gtag('event', 'currency_change', {
+        event_category: 'filters',
+        event_label: currency
+      });
+    }
   };
 
   // Determine which rates to display based on sorting
@@ -166,17 +183,16 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
           {t("rateTable.noFees")}
         </span>
       );
-    } else if (provider.feeType === "Fixed fee") {
+    } else if (provider.feeType && provider.feeType.includes("Fixed")) {
       return (
         <span>
-          {provider.fees} {t("rateTable.sar")}
+          {provider.fees} {t("rateTable.sar")} ({t("rateTable.feeTypes.fixed")})
         </span>
       );
-    } else if (provider.feeType === "Variable fee") {
+    } else if (provider.feeType && provider.feeType.includes("Variable")) {
       return (
         <span>
-          {provider.fees} {t("rateTable.sar")} /{" "}
-          {((provider.fees / amount) * 100).toFixed(1)}%
+          {provider.fees} {t("rateTable.sar")} ({t("rateTable.feeTypes.variable")}, {(provider.fees / amount * 100).toFixed(1)}%)
         </span>
       );
     } else {
@@ -196,13 +212,17 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
 
     for (let i = 0; i < 5; i++) {
       if (i < fullStars) {
-        stars.push(<i key={i} className="fas fa-star text-yellow-400"></i>);
+        stars.push(
+          <i key={i} className="fas fa-star text-yellow-400"></i>
+        );
       } else if (i === fullStars && hasHalfStar) {
         stars.push(
           <i key={i} className="fas fa-star-half-alt text-yellow-400"></i>
         );
       } else {
-        stars.push(<i key={i} className="far fa-star text-gray-300"></i>);
+        stars.push(
+          <i key={i} className="far fa-star text-gray-300"></i>
+        );
       }
     }
 
@@ -283,10 +303,12 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
                   }
                   size="sm"
                   onClick={() => handleSort(option)}
-                  className="flex items-center"
+                  className="flex items-center justify-center gap-2 min-w-[120px]"
                 >
-                  <i className={`fas ${option.icon} mr-1`}></i>
-                  {option.label}
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={option.key === "rate" ? "M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" : (option.key === "fees" ? "M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4" : "M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z")} />
+                  </svg>
+                  <span>{option.label}</span>
                 </Button>
               ))}
             </div>
@@ -302,7 +324,9 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-500 mb-4">
                 <i className="fas fa-exclamation-triangle text-2xl"></i>
               </div>
-              <p className="text-red-600 font-medium">{t("rateTable.error")}</p>
+              <p className="text-red-600 font-medium">
+                {t("rateTable.error")}
+              </p>
               <Button
                 variant="outline"
                 size="sm"
@@ -350,72 +374,50 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
                       >
                         <TableCell>
                           <div className="flex items-center">
-                            <div className="flex-shrink-0 h-10 w-10">
+                            <div className="flex-shrink-0 h-14 w-14">
                               {provider.logo ? (
                                 <div
-                                  className="h-10 w-10 rounded-md flex items-center justify-center p-1 overflow-hidden relative"
+                                  className="h-14 w-14 rounded-md flex items-center justify-center p-1 overflow-hidden relative"
                                   style={{
-                                    background: `linear-gradient(135deg, ${getAccentColor(
-                                      provider.logoColor || "primary"
-                                    )} 0%, #ffffff 100%)`,
+                                    background: "#ffffff",
                                     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                                   }}
                                 >
                                   <img
-                                    className="max-h-[85%] max-w-[85%] object-contain"
+                                    className="max-h-[90%] max-w-[90%] object-contain"
                                     style={{
-                                      filter:
-                                        "drop-shadow(0px 1px 1px rgba(0,0,0,0.1))",
-                                      backgroundColor:
-                                        "rgba(255, 255, 255, 0.7)",
                                       borderRadius: "4px",
                                       padding: "4px",
                                     }}
-                                    src={provider.logo}
+                                    src={provider.logo && provider.logo.startsWith('http') 
+                                      ? provider.logo 
+                                      : `/images/providers/${provider.providerKey}.jpeg`}
                                     alt={`${provider.name} logo`}
-                                    loading="eager"
                                     onError={(e) => {
-                                      // Try different file extensions before falling back to text
-                                      const target =
-                                        e.target as HTMLImageElement;
-                                      const originalSrc = target.src;
-
-                                      // If path ends with .png, try .jpeg
-                                      if (originalSrc.endsWith(".png")) {
-                                        const newSrc = originalSrc.replace(
-                                          ".png",
-                                          ".jpeg"
-                                        );
-                                        target.src = newSrc;
-                                        return;
-                                      }
-
-                                      // If path ends with .svg, try .jpeg
-                                      if (originalSrc.endsWith(".svg")) {
-                                        const newSrc = originalSrc.replace(
-                                          ".svg",
-                                          ".jpeg"
-                                        );
-                                        target.src = newSrc;
-                                        return;
-                                      }
-
-                                      // Final fallback to text logo
-                                      target.style.display = "none";
-                                      const parent = target.parentElement;
-                                      if (parent) {
-                                        parent.style.background =
-                                          getAccentColor(
-                                            provider.logoColor || "primary"
+                                      const target = e.currentTarget;
+                                      target.onerror = null;
+                                      
+                                      // Try different formats
+                                      if (target.src.includes('.jpg')) {
+                                        target.src = `/images/providers/${provider.providerKey}.png`;
+                                      } else if (target.src.includes('.png')) {
+                                        target.src = `/images/providers/${provider.providerKey}.svg`;
+                                      } else {
+                                        // Final fallback to text representation
+                                        target.style.display = "none";
+                                        const parent = target.parentElement;
+                                        if (parent) {
+                                          parent.style.background = getAccentColor(
+                                            provider.logoColor || "primary",
                                           );
-                                        parent.innerHTML = `<span style="color: #ffffff; font-weight: bold;" class="text-lg">${
-                                          provider.logoText ||
-                                          provider.name
-                                            .substring(0, 2)
-                                            .toUpperCase()
-                                        }</span>`;
+                                          parent.innerHTML = `<span style="color: #ffffff; font-weight: bold;" class="text-lg">${
+                                            provider.logoText ||
+                                            provider.name.substring(0, 2).toUpperCase()
+                                          }</span>`;
+                                        }
                                       }
                                     }}
+                                    loading="eager"
                                   />
                                 </div>
                               ) : (
@@ -423,7 +425,7 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
                                   className="h-10 w-10 rounded-md flex items-center justify-center text-white font-bold text-lg"
                                   style={{
                                     backgroundColor: getAccentColor(
-                                      provider.logoColor || "primary"
+                                      provider.logoColor || "primary",
                                     ),
                                     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
                                   }}
@@ -435,15 +437,15 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
                             </div>
                             <div className="ml-4">
                               <div className="text-sm font-medium text-gray-900">
-                                {provider.name}
+                                {getLocalizedName(provider.providerKey, provider.name)}
                                 {provider.badge && (
                                   <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
-                                    {provider.badge}
+                                    {t(`badges.${provider.badge.toLowerCase().replace(/\s+/g, '_')}`, {defaultValue: provider.badge})}
                                   </span>
                                 )}
                               </div>
                               <div className="text-xs text-gray-500">
-                                {provider.type}
+                                {t(`providerTypes.${provider.type.toLowerCase().replace(/\s+/g, '_')}`, {defaultValue: provider.type})}
                               </div>
                             </div>
                           </div>
@@ -486,7 +488,7 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
                             {renderFees(provider)}
                           </div>
                           <div className="text-xs text-gray-500">
-                            {provider.feeType}
+                            {t(`feeTypeLabels.${provider.feeType.toLowerCase().replace(/\s+/g, '_')}`, {defaultValue: provider.feeType})}
                           </div>
                         </TableCell>
                         <TableCell className="hidden md:table-cell">
@@ -502,16 +504,13 @@ const RateComparisonTable: React.FC<{ countryCode: string }> = ({
                             href={provider.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center px-3 py-1.5 text-sm font-medium rounded-md border border-blue-500 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                            style={{ color: "#ffffff", fontWeight: "bold" }}
+                            className="inline-flex items-center justify-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md border border-blue-500 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 min-w-[120px]"
+                            style={{ color: '#ffffff', fontWeight: 'bold' }}
                           >
-                            <span style={{ color: "#ffffff" }}>
-                              {t("rateTable.sendMoney")}
-                            </span>{" "}
-                            <i
-                              className="fas fa-external-link-alt ml-1"
-                              style={{ color: "#ffffff" }}
-                            ></i>
+                            <span style={{ color: '#ffffff' }}>{t("rateTable.sendMoney")}</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ color: '#ffffff' }}>
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
                           </a>
                         </TableCell>
                       </TableRow>

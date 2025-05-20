@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { useAdminAuth } from "@/hooks/use-admin-auth";
 import axios from "axios";
 
 // Form schema for login
@@ -28,6 +29,14 @@ type LoginForm = z.infer<typeof loginSchema>;
 export default function AdminLogin() {
   const [_, setLocation] = useLocation();
   const { toast } = useToast();
+  const { login, isAuthenticated } = useAdminAuth();
+  
+  // Check if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      setLocation("/admin/quick-update");
+    }
+  }, [isAuthenticated, setLocation]);
   
   // Initialize form with react-hook-form
   const form = useForm<LoginForm>({
@@ -41,21 +50,10 @@ export default function AdminLogin() {
   // Handle form submission
   async function onSubmit(values: LoginForm) {
     try {
-      const response = await axios.post("/api/admin/login", values);
-      
-      if (response.status === 200) {
-        toast({
-          title: "Login successful",
-          description: "Redirecting to admin dashboard...",
-        });
-        setLocation("/admin/exchange-rates");
-      }
+      await login(values.username, values.password);
+      // Auth hook will handle redirect to admin dashboard
     } catch (error) {
-      toast({
-        title: "Login failed",
-        description: "Invalid username or password",
-        variant: "destructive",
-      });
+      // Auth hook will handle error toasts
     }
   }
 
@@ -102,33 +100,7 @@ export default function AdminLogin() {
                 </Button>
               </form>
               
-              <div className="mt-6 pt-6 border-t border-gray-200">
-                <p className="text-xs text-gray-500 mb-2">First time setup:</p>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="w-full"
-                  onClick={async () => {
-                    try {
-                      await axios.post("/api/admin/setup");
-                      toast({
-                        title: "Admin account created",
-                        description: "Username: admin, Password: admin123",
-                      });
-                      form.setValue("username", "admin");
-                      form.setValue("password", "admin123");
-                    } catch (error) {
-                      toast({
-                        title: "Setup failed",
-                        description: "Admin account may already exist",
-                        variant: "destructive",
-                      });
-                    }
-                  }}
-                >
-                  Create Admin Account
-                </Button>
-              </div>
+
             </Form>
           </CardContent>
         </Card>
