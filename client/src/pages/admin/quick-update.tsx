@@ -205,7 +205,7 @@ export default function QuickUpdate() {
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     {/* Provider Info */}
                     <div className="flex items-center gap-3 flex-1">
-                      <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
+                      <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center relative">
                         <img 
                           src={rate.logo} 
                           alt={rate.name}
@@ -213,10 +213,14 @@ export default function QuickUpdate() {
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
                             target.style.display = 'none';
-                            target.nextElementSibling!.textContent = rate.logoText || rate.name.charAt(0).toUpperCase();
+                            const fallback = target.nextElementSibling as HTMLElement;
+                            if (fallback) {
+                              fallback.style.display = 'flex';
+                              fallback.textContent = rate.logoText || rate.name.charAt(0).toUpperCase();
+                            }
                           }}
                         />
-                        <span className="text-xs font-semibold text-gray-600 hidden">
+                        <span className="absolute inset-0 text-xs font-semibold text-gray-600 items-center justify-center hidden">
                           {rate.logoText || rate.name.charAt(0).toUpperCase()}
                         </span>
                       </div>
