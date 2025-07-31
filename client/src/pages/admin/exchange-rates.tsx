@@ -62,7 +62,9 @@ export default function AdminExchangeRates() {
   const { data: providers = [] } = useQuery({
     queryKey: ["/api/admin/providers"],
     queryFn: async () => {
-      const response = await axios.get("/api/admin/providers");
+      const response = await axios.get("/api/admin/providers", {
+        withCredentials: true
+      });
       return response.data;
     }
   });
@@ -71,7 +73,9 @@ export default function AdminExchangeRates() {
   const { data: rates = [], isLoading, refetch } = useQuery({
     queryKey: ["/api/admin/exchange-rates"],
     queryFn: async () => {
-      const response = await axios.get("/api/admin/exchange-rates");
+      const response = await axios.get("/api/admin/exchange-rates", {
+        withCredentials: true
+      });
       return response.data;
     }
   });
@@ -96,7 +100,9 @@ export default function AdminExchangeRates() {
   // Mutation for updating an exchange rate
   const updateRateMutation = useMutation({
     mutationFn: async (data: RateForm) => {
-      return axios.patch(`/api/admin/exchange-rates/${editingRateId}`, data);
+      return axios.patch(`/api/admin/exchange-rates/${editingRateId}`, data, {
+        withCredentials: true
+      });
     },
     onSuccess: () => {
       toast({

@@ -32,7 +32,9 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const checkInitialAuth = async () => {
       try {
-        const response = await axios.get('/api/admin/check-auth');
+        const response = await axios.get('/api/admin/check-auth', {
+          withCredentials: true
+        });
         if (response.status === 200 && response.data.authenticated) {
           setAdmin(response.data.admin);
           setIsAuthenticated(true);
@@ -51,7 +53,9 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (username: string, password: string) => {
     try {
-      const response = await axios.post('/api/admin/login', { username, password });
+      const response = await axios.post('/api/admin/login', { username, password }, {
+        withCredentials: true
+      });
       setAdmin(response.data.admin);
       setIsAuthenticated(true);
       toast({
@@ -72,7 +76,9 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
 
   const logout = async () => {
     try {
-      await axios.post('/api/admin/logout');
+      await axios.post('/api/admin/logout', {}, {
+        withCredentials: true
+      });
       setAdmin(null);
       setIsAuthenticated(false);
       toast({
@@ -92,7 +98,9 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
 
   const checkAuth = async (): Promise<boolean> => {
     try {
-      const response = await axios.get('/api/admin/check-auth');
+      const response = await axios.get('/api/admin/check-auth', {
+        withCredentials: true
+      });
       if (response.status === 200 && response.data.authenticated) {
         setAdmin(response.data.admin);
         setIsAuthenticated(true);
