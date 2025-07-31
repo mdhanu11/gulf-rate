@@ -26,11 +26,14 @@ import axios from 'axios';
 
 interface Rate {
   id: number;
-  providerId: number;
   providerKey: string;
-  providerName: string;
-  fromCurrency: string;
-  toCurrency: string;
+  name: string;
+  logo: string;
+  logoText: string;
+  logoColor: string;
+  url: string;
+  type: string;
+  badge: string | null;
   rate: number;
   rateChange: number;
   fees: number;
@@ -38,6 +41,7 @@ interface Rate {
   transferTime: string;
   rating: number;
   highlight: boolean;
+  lastUpdated: string;
 }
 
 export default function QuickUpdate() {
@@ -107,7 +111,7 @@ export default function QuickUpdate() {
 
   // Filter rates based on search
   const filteredRates = rates.filter((rate: Rate) =>
-    rate.providerName?.toLowerCase()?.includes(searchQuery.toLowerCase()) || false
+    rate.name?.toLowerCase()?.includes(searchQuery.toLowerCase()) || false
   );
 
   const currencies = ['INR', 'BDT', 'PKR', 'PHP', 'NPR', 'LKR', 'EGP', 'EUR', 'GBP', 'USD'];
@@ -177,12 +181,24 @@ export default function QuickUpdate() {
                     {/* Provider Info */}
                     <div className="flex items-center gap-3 flex-1">
                       <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                        {rate.providerKey?.charAt(0)?.toUpperCase() || 'P'}
+                        <img 
+                          src={rate.logo} 
+                          alt={rate.name}
+                          className="w-8 h-8 object-contain rounded"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                            target.nextElementSibling!.textContent = rate.logoText || rate.name.charAt(0).toUpperCase();
+                          }}
+                        />
+                        <span className="text-xs font-semibold text-gray-600 hidden">
+                          {rate.logoText || rate.name.charAt(0).toUpperCase()}
+                        </span>
                       </div>
                       <div>
-                        <h3 className="font-semibold">{rate.providerName || 'Unknown Provider'}</h3>
+                        <h3 className="font-semibold">{rate.name}</h3>
                         <p className="text-sm text-gray-600">
-                          {rate.fromCurrency} → {rate.toCurrency}
+                          SAR → INR • {rate.type}
                         </p>
                       </div>
                     </div>
@@ -250,12 +266,12 @@ export default function QuickUpdate() {
 
                   {/* Additional Info */}
                   <div className="flex flex-wrap gap-2 mt-3 pt-3 border-t">
-                    <Badge variant="outline">{rate.transferTime || 'N/A'}</Badge>
+                    <Badge variant="outline">{rate.transferTime}</Badge>
                     <Badge variant="outline">
-                      ★ {rate.rating?.toFixed(1) || '0.0'}
+                      ★ {rate.rating.toFixed(1)}
                     </Badge>
-                    {rate.highlight && (
-                      <Badge variant="default">Best Rate</Badge>
+                    {rate.badge && (
+                      <Badge variant="default">{rate.badge}</Badge>
                     )}
                   </div>
                 </CardContent>
