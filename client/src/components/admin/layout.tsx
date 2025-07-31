@@ -57,9 +57,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   
   // Navigation items based on role
   const navItems = [
-    { href: "/admin/mobile-update", label: "Mobile Update" },
+    { href: "/admin/quick-update", label: "Quick Update" },
     { href: "/admin/exchange-rates", label: "Exchange Rates" },
-    { href: "/admin/quick-update", label: "Quick Update (Old)" },
     // Only show providers page for full admins
     ...(admin?.role === 'admin' ? [{ href: "/admin/providers", label: "Providers" }] : [])
   ];

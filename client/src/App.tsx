@@ -14,7 +14,6 @@ import AdminLogin from "@/pages/admin/login";
 import AdminExchangeRates from "@/pages/admin/exchange-rates";
 import AdminProviders from "@/pages/admin/providers";
 import AdminQuickUpdate from "@/pages/admin/quick-update";
-import MobileRateUpdate from "@/pages/admin/mobile-rate-update";
 import AccessDenied from "@/pages/admin/access-denied";
 
 // Import analytics functions
@@ -40,7 +39,6 @@ function Router() {
       <Route path="/admin/exchange-rates" component={AdminExchangeRates} />
       <Route path="/admin/providers" component={AdminProviders} />
       <Route path="/admin/quick-update" component={AdminQuickUpdate} />
-      <Route path="/admin/mobile-update" component={MobileRateUpdate} />
       <Route path="/admin/access-denied" component={AccessDenied} />
 
       {/* 404 route */}
