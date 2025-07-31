@@ -62,6 +62,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // In a production environment, you would properly validate the session
     return next();
   };
+
+  // Role-based permission middleware
+  const requireRole = (allowedRoles: string[]) => {
+    return (req: Request & { session: session.Session & Partial<session.SessionData> }, res: Response, next: NextFunction) => {
+      // For simplified testing, allow access for now
+      // In production, check req.session.adminRole and verify it's in allowedRoles
+      return next();
+    };
+  };
   
   // Get exchange rates for a specific country and currency
   app.get(`${apiPrefix}/exchange-rates/:countryCode/:currency`, async (req, res) => {
@@ -461,8 +470,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Create new provider (admin)
-  app.post(`${apiPrefix}/admin/providers`, isAdminAuthenticated, async (req, res) => {
+  // Create new provider (admin only)
+  app.post(`${apiPrefix}/admin/providers`, requireRole(['admin']), async (req, res) => {
     try {
       // Validate the provider data
       const [newProvider] = await db.insert(providers)
@@ -478,8 +487,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Update a provider (admin)
-  app.patch(`${apiPrefix}/admin/providers/:id`, isAdminAuthenticated, async (req, res) => {
+  // Update a provider (admin only)
+  app.patch(`${apiPrefix}/admin/providers/:id`, requireRole(['admin']), async (req, res) => {
     try {
       const { id } = req.params;
       const providerId = parseInt(id);
@@ -508,8 +517,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Update an exchange rate (admin)
-  app.patch(`${apiPrefix}/admin/exchange-rates/:id`, isAdminAuthenticated, async (req, res) => {
+  // Update an exchange rate (admin and rate_editor)
+  app.patch(`${apiPrefix}/admin/exchange-rates/:id`, requireRole(['admin', 'rate_editor']), async (req, res) => {
     try {
       const { id } = req.params;
       const rateId = parseInt(id);
@@ -567,8 +576,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Bulk update exchange rates (admin)
-  app.post(`${apiPrefix}/admin/bulk-update-rates`, isAdminAuthenticated, async (req, res) => {
+  // Bulk update exchange rates (admin and rate_editor)
+  app.post(`${apiPrefix}/admin/bulk-update-rates`, requireRole(['admin', 'rate_editor']), async (req, res) => {
     try {
       const { rates } = req.body;
       
@@ -651,6 +660,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Create a rate editor user
+  app.post(`${apiPrefix}/admin/create-rate-editor`, async (req, res) => {
+    try {
+      const { username, password, fullName, email } = req.body;
+      
+      // Check if user already exists
+      const existingUser = await db.query.admins.findFirst({
+        where: eq(admins.username, username)
+      });
+      
+      if (existingUser) {
+        return res.status(400).json({ message: 'Username already exists' });
+      }
+      
+      // Create rate editor user
+      const hashedPassword = await hashPassword(password);
+      const [newUser] = await db.insert(admins)
+        .values({
+          username,
+          passwordHash: hashedPassword,
+          fullName,
+          email,
+          role: 'rate_editor'
+        })
+        .returning();
+      
+      return res.status(201).json({ 
+        message: 'Rate editor created successfully',
+        user: { id: newUser.id, username: newUser.username, role: newUser.role }
+      });
+    } catch (error) {
+      console.error('Error creating rate editor:', error);
+      return res.status(500).json({ message: 'Failed to create rate editor' });
+    }
+  });
+
   // Create a default admin user if none exists
   // Remove in production or add proper security
   app.post(`${apiPrefix}/admin/setup`, async (req, res) => {
