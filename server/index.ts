@@ -8,6 +8,36 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const app = express();
+
+// Trust proxy for deployed environments (like Replit)
+app.set('trust proxy', 1);
+
+// CORS configuration for deployment
+app.use((req, res, next) => {
+  // Allow requests from any origin in development, specific domains in production
+  const allowedOrigins = process.env.NODE_ENV === 'production' 
+    ? [process.env.FRONTEND_URL, /\.replit\.dev$/, /\.replit\.app$/]
+    : ['http://localhost:5000', /\.replit\.dev$/];
+    
+  const origin = req.headers.origin;
+  
+  if (origin && allowedOrigins.some(allowed => 
+    typeof allowed === 'string' ? allowed === origin : allowed.test(origin)
+  )) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS,PATCH');
+  res.header('Access-Control-Allow-Headers', 'Origin,X-Requested-With,Content-Type,Accept,Authorization');
+  
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200);
+  } else {
+    next();
+  }
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

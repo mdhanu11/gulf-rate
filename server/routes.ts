@@ -9,6 +9,7 @@ import { eq, desc, and } from "drizzle-orm";
 import { scrypt as _scrypt, randomBytes } from "crypto";
 import { promisify } from "util";
 import session from "express-session";
+import ConnectPgSimple from "connect-pg-simple";
 
 // Extend Express session with our custom properties
 declare module "express-session" {
@@ -26,15 +27,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create HTTP server
   const httpServer = createServer(app);
   
-  // Configure session middleware
+  // PostgreSQL session store
+  const PgSession = ConnectPgSimple(session);
+  
+  // Configure session middleware with PostgreSQL store
   app.use(session({
-    secret: 'gulf-rate-secret-key', // In production, use environment variable
+    store: new PgSession({
+      conString: process.env.DATABASE_URL,
+      tableName: 'session', // Will be created automatically
+      createTableIfMissing: true
+    }),
+    secret: process.env.SESSION_SECRET || 'gulf-rate-secret-key-production',
     resave: false,
     saveUninitialized: false,
     cookie: { 
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours 
-      secure: false // Set to true in production with HTTPS
-    }
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      secure: process.env.NODE_ENV === 'production', // HTTPS in production
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Cross-site cookies for deployment
+      httpOnly: true // Security: prevent XSS attacks
+    },
+    name: 'gulf_rate_session' // Custom session name
   }));
   
   // Define the API routes
