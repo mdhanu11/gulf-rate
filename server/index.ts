@@ -12,24 +12,13 @@ const app = express();
 // Trust proxy for deployed environments (like Replit)
 app.set('trust proxy', 1);
 
-// CORS configuration for deployment
+// CORS configuration for deployment - Simplified
 app.use((req, res, next) => {
-  // Allow requests from any origin in development, specific domains in production
-  const allowedOrigins = process.env.NODE_ENV === 'production' 
-    ? [process.env.FRONTEND_URL, /\.replit\.dev$/, /\.replit\.app$/]
-    : ['http://localhost:5000', /\.replit\.dev$/];
-    
-  const origin = req.headers.origin;
-  
-  if (origin && allowedOrigins.some(allowed => 
-    typeof allowed === 'string' ? allowed === origin : allowed.test(origin)
-  )) {
-    res.header('Access-Control-Allow-Origin', origin);
-  }
-  
+  // Set headers for all requests
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
   res.header('Access-Control-Allow-Credentials', 'true');
   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS,PATCH');
-  res.header('Access-Control-Allow-Headers', 'Origin,X-Requested-With,Content-Type,Accept,Authorization');
+  res.header('Access-Control-Allow-Headers', 'Origin,X-Requested-With,Content-Type,Accept,Authorization,Cookie');
   
   if (req.method === 'OPTIONS') {
     res.sendStatus(200);
@@ -72,6 +61,10 @@ app.use((req, res, next) => {
 });
 
 (async () => {
+  console.log('Starting Gulf Rate App...');
+  console.log('NODE_ENV:', process.env.NODE_ENV || 'development');
+  console.log('Database URL exists:', !!process.env.DATABASE_URL);
+  
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

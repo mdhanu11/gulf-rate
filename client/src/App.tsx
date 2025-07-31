@@ -68,7 +68,7 @@ function App() {
   // Initialize Google Analytics when app loads
   useEffect(() => {
     // Check if gtag is already available from HTML initialization
-    if (typeof window.gtag === "function") {
+    if (window.gtag) {
       // Initialize our React app's analytics
       const success = initGA();
       setAnalyticsReady(success);

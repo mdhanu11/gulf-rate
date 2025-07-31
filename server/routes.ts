@@ -42,8 +42,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     saveUninitialized: false,
     cookie: { 
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
-      secure: process.env.NODE_ENV === 'production', // HTTPS in production
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Cross-site cookies for deployment
+      secure: false, // Keep false for Replit deployments
+      sameSite: 'lax', // Use lax for same-site deployment
       httpOnly: true // Security: prevent XSS attacks
     },
     name: 'gulf_rate_session' // Custom session name
@@ -51,6 +51,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Define the API routes
   const apiPrefix = '/api';
+  
+  // Health check endpoint
+  app.get('/health', (req: Request, res: Response) => {
+    res.json({ 
+      status: 'ok', 
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || 'development'
+    });
+  });
   
   // Helper function to hash passwords
   async function hashPassword(password: string): Promise<string> {
