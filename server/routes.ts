@@ -470,10 +470,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { id } = req.params;
       const { rate, fees } = req.body;
       
-      console.log(`Updating rate ID ${id} with:`, { rate, fees });
+      console.log(`[PATCH] Updating rate ID ${id} with:`, { rate, fees });
+      console.log(`[PATCH] Request body:`, req.body);
+      console.log(`[PATCH] User session:`, req.session?.admin?.username);
       
       // Validate ID
       if (!id || isNaN(parseInt(id))) {
+        console.log(`[PATCH] Invalid rate ID: ${id}`);
         return res.status(400).json({ message: 'Invalid rate ID' });
       }
       
@@ -486,6 +489,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const numericRate = typeof rate === 'number' ? rate : parseFloat(rate.toString());
         if (!isNaN(numericRate)) {
           updateValues.rate = numericRate;
+          console.log(`[PATCH] Setting rate to: ${numericRate}`);
         }
       }
       
@@ -493,8 +497,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const numericFees = typeof fees === 'number' ? fees : parseFloat(fees.toString());
         if (!isNaN(numericFees)) {
           updateValues.fees = numericFees;
+          console.log(`[PATCH] Setting fees to: ${numericFees}`);
         }
       }
+      
+      console.log(`[PATCH] Final update values:`, updateValues);
       
       // Set no-cache headers for admin data
       res.set({
@@ -510,18 +517,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         .returning();
       
       if (!updatedRate) {
+        console.log(`[PATCH] No rate found with ID: ${id}`);
         return res.status(404).json({ message: 'Exchange rate not found' });
       }
       
-      console.log('Successfully updated rate:', updatedRate);
+      console.log(`[PATCH] Successfully updated rate:`, {
+        id: updatedRate.id,
+        rate: updatedRate.rate,
+        fees: updatedRate.fees,
+        lastUpdated: updatedRate.lastUpdated
+      });
       
       return res.status(200).json({
         message: 'Exchange rate updated successfully',
         updatedRate
       });
     } catch (error) {
-      console.error('Error updating exchange rate:', error);
-      return res.status(500).json({ message: 'Failed to update exchange rate' });
+      console.error(`[PATCH] Error updating exchange rate:`, error);
+      return res.status(500).json({ message: 'Failed to update exchange rate', error: String(error) });
     }
   });
 

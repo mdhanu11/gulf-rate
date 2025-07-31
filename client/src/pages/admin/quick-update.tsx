@@ -75,12 +75,21 @@ export default function QuickUpdate() {
   // Update rate mutation
   const updateRateMutation = useMutation({
     mutationFn: async ({ id, rate, fees }: { id: number; rate: number; fees: number }) => {
-      return axios.patch(`/api/admin/exchange-rates/${id}`, {
+      console.log(`[CLIENT] Updating rate ID ${id} with:`, { rate, fees });
+      const response = await axios.patch(`/api/admin/exchange-rates/${id}`, {
         rate,
         fees,
-      }, { withCredentials: true });
+      }, { 
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log(`[CLIENT] Update response:`, response.data);
+      return response;
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
+      console.log(`[CLIENT] Update successful:`, response.data);
       toast({
         title: "Rate updated successfully",
         description: "The exchange rate has been updated.",
@@ -88,10 +97,11 @@ export default function QuickUpdate() {
       queryClient.invalidateQueries({ queryKey: ['/api/exchange-rates', 'sa', selectedCurrency] });
       setEditingId(null);
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error(`[CLIENT] Update failed:`, error);
       toast({
         title: "Update failed",
-        description: "Failed to update the exchange rate.",
+        description: error.response?.data?.message || "Failed to update the exchange rate.",
         variant: "destructive",
       });
     },
