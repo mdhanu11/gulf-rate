@@ -442,15 +442,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Insert the exchange rate
       const [newRate] = await db.insert(exchangeRates).values({
-        providerId: providerId,
-        countryCode: countryCode,
+        providerId: parseInt(providerId),
         fromCurrency: fromCurrency,
         toCurrency: toCurrency,
-        rate: rate,
-        rateChange: rateChange || 0,
-        fees: fees,
+        rate: parseFloat(rate).toString(),
+        rateChange: parseFloat(rateChange || 0).toString(),
+        fees: parseFloat(fees).toString(),
         feeType: feeType,
         transferTime: transferTime || '1-2 days',
+        rating: parseFloat("4.0").toString(),
         lastUpdated: new Date()
       }).returning();
       
