@@ -56,10 +56,13 @@ export default function QuickUpdate() {
   const { data: rates = [], isLoading, refetch } = useQuery({
     queryKey: ['/api/exchange-rates', 'sa', selectedCurrency],
     queryFn: async () => {
+      console.log('Fetching rates for currency:', selectedCurrency);
       const response = await axios.get(`/api/exchange-rates/sa/${selectedCurrency}`);
+      console.log('Received rates:', response.data.rates?.length || 0);
       return response.data.rates || [];
     },
-    enabled: !!selectedCurrency,
+    staleTime: 0, // Always refetch
+    gcTime: 0, // Don't cache
   });
 
   // Update rate mutation
