@@ -116,7 +116,7 @@ export const storage = {
           
           if (rate) {
             return {
-              id: provider.id,
+              id: rate.id, // Use the actual exchange rate ID, not provider ID
               providerKey: provider.providerKey,
               name: provider.name,
               logo: provider.logo,
