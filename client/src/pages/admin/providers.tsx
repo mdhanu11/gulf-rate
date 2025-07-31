@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import AdminLayout from "@/components/admin/layout";
 import { useToast } from "@/hooks/use-toast";
+import { useAdminAuth } from "@/hooks/use-admin-auth";
+import AccessDenied from "./access-denied";
 import {
   Table,
   TableBody,
@@ -60,9 +62,15 @@ type ProviderForm = z.infer<typeof providerSchema>;
 
 export default function AdminProviders() {
   const { toast } = useToast();
+  const { admin } = useAdminAuth();
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProviderId, setEditingProviderId] = useState<number | null>(null);
+  
+  // Check if user has admin privileges
+  if (admin?.role !== 'admin') {
+    return <AccessDenied />;
+  }
   
   // Fetch all providers
   const { data: providers = [], isLoading } = useQuery({

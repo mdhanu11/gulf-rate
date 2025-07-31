@@ -12,7 +12,7 @@ interface AdminLayoutProps {
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const [location, setLocation] = useLocation();
   const { toast } = useToast();
-  const { isAuthenticated, logout, isLoading, checkAuth } = useAdminAuth();
+  const { isAuthenticated, logout, isLoading, checkAuth, admin } = useAdminAuth();
   
   // Check authentication on mount
   useEffect(() => {
@@ -55,11 +55,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     return null;
   }
   
-  // Navigation items
+  // Navigation items based on role
   const navItems = [
     { href: "/admin/quick-update", label: "Quick Rate Update" },
     { href: "/admin/exchange-rates", label: "Exchange Rates" },
-    { href: "/admin/providers", label: "Providers" }
+    // Only show providers page for full admins
+    ...(admin?.role === 'admin' ? [{ href: "/admin/providers", label: "Providers" }] : [])
   ];
   
   return (
@@ -91,7 +92,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                 ))}
               </div>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-600">
+                {admin?.role === 'admin' ? 'Full Admin' : 'Rate Editor'} - {admin?.username}
+              </span>
               <Button variant="outline" onClick={handleLogout}>
                 Logout
               </Button>
