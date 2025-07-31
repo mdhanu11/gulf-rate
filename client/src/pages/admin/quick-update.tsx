@@ -54,15 +54,22 @@ export default function QuickUpdate() {
 
   // Fetch rates for Saudi Arabia and selected currency
   const { data: rates = [], isLoading, refetch } = useQuery({
-    queryKey: ['/api/exchange-rates', 'sa', selectedCurrency],
+    queryKey: ['/api/exchange-rates', 'sa', selectedCurrency, Date.now()],
     queryFn: async () => {
       console.log('Fetching rates for currency:', selectedCurrency);
-      const response = await axios.get(`/api/exchange-rates/sa/${selectedCurrency}`);
+      const timestamp = Date.now();
+      const response = await axios.get(`/api/exchange-rates/sa/${selectedCurrency}?t=${timestamp}`, {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
       console.log('Received rates:', response.data.rates?.length || 0);
       return response.data.rates || [];
     },
     staleTime: 0, // Always refetch
     gcTime: 0, // Don't cache
+    refetchInterval: 1000 * 30, // Refetch every 30 seconds for admin
   });
 
   // Update rate mutation

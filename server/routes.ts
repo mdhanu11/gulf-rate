@@ -105,6 +105,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
       
+      // Set no-cache headers to ensure fresh data on deployment
+      res.set({
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      });
+      
       // Get exchange rates
       const data = await storage.getExchangeRates(countryCode, currency);
       
@@ -293,6 +300,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all exchange rates (admin)
   app.get(`${apiPrefix}/admin/exchange-rates`, isAdminAuthenticated, async (req, res) => {
     try {
+      // Set no-cache headers for admin data
+      res.set({
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      });
+
       const rates = await db.query.exchangeRates.findMany({
         with: {
           provider: true

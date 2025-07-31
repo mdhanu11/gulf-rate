@@ -11,9 +11,22 @@ interface ExchangeRateResponse {
 // Custom hook to fetch exchange rates
 export function useExchangeRates(countryCode: string, currency: string) {
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: [`/api/exchange-rates/${countryCode}/${currency}`],
-    refetchOnWindowFocus: false,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    queryKey: [`/api/exchange-rates/${countryCode}/${currency}`, Date.now()],
+    queryFn: async () => {
+      // Add timestamp to bypass browser cache on deployed sites
+      const timestamp = Date.now();
+      const response = await axios.get(`/api/exchange-rates/${countryCode}/${currency}?t=${timestamp}`, {
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
+      return response.data;
+    },
+    refetchOnWindowFocus: true, // Enable refetch on window focus for deployed sites
+    staleTime: 0, // Always fetch fresh data, no stale time
+    gcTime: 0, // Don't cache at all
+    refetchInterval: 1000 * 60 * 2, // Auto-refetch every 2 minutes
   });
 
   return {
