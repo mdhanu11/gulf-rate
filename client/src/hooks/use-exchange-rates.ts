@@ -11,7 +11,7 @@ interface ExchangeRateResponse {
 // Custom hook to fetch exchange rates
 export function useExchangeRates(countryCode: string, currency: string) {
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: [`/api/exchange-rates/${countryCode}/${currency}`, Date.now()],
+    queryKey: [`/api/exchange-rates/${countryCode}/${currency}`],
     queryFn: async () => {
       // Add timestamp to bypass browser cache on deployed sites
       const timestamp = Date.now();

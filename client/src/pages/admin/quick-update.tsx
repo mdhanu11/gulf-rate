@@ -54,7 +54,7 @@ export default function QuickUpdate() {
 
   // Fetch rates for Saudi Arabia and selected currency
   const { data: rates = [], isLoading, refetch } = useQuery({
-    queryKey: ['/api/exchange-rates', 'sa', selectedCurrency, Date.now()],
+    queryKey: ['/api/exchange-rates', 'sa', selectedCurrency],
     queryFn: async () => {
       console.log('Fetching rates for currency:', selectedCurrency);
       const timestamp = Date.now();
