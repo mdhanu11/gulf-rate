@@ -142,6 +142,37 @@ export const storage = {
       // Filter out null values and add metadata
       const validRates = rates.filter((rate) => rate !== null);
       
+      // Calculate dynamic badges based on actual rates
+      if (validRates.length > 0) {
+        // Find highest rate (best for customer)
+        const highestRate = Math.max(...validRates.map(rate => rate!.rate));
+        // Find lowest fee
+        const lowestFee = Math.min(...validRates.map(rate => rate!.fees));
+        
+        // Assign dynamic badges
+        validRates.forEach(rate => {
+          if (rate) {
+            // Reset badge first
+            rate.badge = null;
+            
+            // Check if this rate qualifies for "Best Rate" (highest exchange rate)
+            if (Math.abs(rate.rate - highestRate) < 0.001) {
+              rate.badge = "Best Rate";
+              rate.highlight = true;
+            }
+            // Check if this rate qualifies for "Lowest Fee" (but only if not already best rate)
+            else if (Math.abs(rate.fees - lowestFee) < 0.01) {
+              rate.badge = "Lowest Fee";
+              rate.highlight = true;
+            }
+            // Remove highlight if no badge
+            else {
+              rate.highlight = false;
+            }
+          }
+        });
+      }
+      
       // Add last updated timestamp for the whole dataset
       const lastUpdated = validRates.length > 0
         ? Math.max(...validRates.map((rate) => rate!.lastUpdated.getTime()))
