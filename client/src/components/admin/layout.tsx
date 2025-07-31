@@ -93,9 +93,18 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">
-                {admin?.role === 'admin' ? 'Full Admin' : 'Rate Editor'} - {admin?.username}
-              </span>
+              <div className="flex items-center space-x-2">
+                <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+                  admin?.role === 'admin' 
+                    ? 'bg-blue-100 text-blue-800' 
+                    : 'bg-green-100 text-green-800'
+                }`}>
+                  {admin?.role === 'admin' ? 'Admin' : 'Editor'}
+                </div>
+                <span className="text-sm text-gray-600 hidden sm:inline">
+                  {admin?.username}
+                </span>
+              </div>
               <Button variant="outline" onClick={handleLogout}>
                 Logout
               </Button>
