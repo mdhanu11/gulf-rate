@@ -464,6 +464,67 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Update single exchange rate (admin)
+  app.patch(`${apiPrefix}/admin/exchange-rates/:id`, isAdminAuthenticated, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { rate, fees } = req.body;
+      
+      console.log(`Updating rate ID ${id} with:`, { rate, fees });
+      
+      // Validate ID
+      if (!id || isNaN(parseInt(id))) {
+        return res.status(400).json({ message: 'Invalid rate ID' });
+      }
+      
+      // Build update object
+      const updateValues: Record<string, any> = { 
+        lastUpdated: new Date() 
+      };
+      
+      if (rate !== undefined && rate !== null) {
+        const numericRate = typeof rate === 'number' ? rate : parseFloat(rate.toString());
+        if (!isNaN(numericRate)) {
+          updateValues.rate = numericRate;
+        }
+      }
+      
+      if (fees !== undefined && fees !== null) {
+        const numericFees = typeof fees === 'number' ? fees : parseFloat(fees.toString());
+        if (!isNaN(numericFees)) {
+          updateValues.fees = numericFees;
+        }
+      }
+      
+      // Set no-cache headers for admin data
+      res.set({
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      });
+      
+      // Update the rate in database
+      const [updatedRate] = await db.update(exchangeRates)
+        .set(updateValues)
+        .where(eq(exchangeRates.id, parseInt(id)))
+        .returning();
+      
+      if (!updatedRate) {
+        return res.status(404).json({ message: 'Exchange rate not found' });
+      }
+      
+      console.log('Successfully updated rate:', updatedRate);
+      
+      return res.status(200).json({
+        message: 'Exchange rate updated successfully',
+        updatedRate
+      });
+    } catch (error) {
+      console.error('Error updating exchange rate:', error);
+      return res.status(500).json({ message: 'Failed to update exchange rate' });
+    }
+  });
+
   // Create new exchange rate (admin)
   app.post(`${apiPrefix}/admin/exchange-rates`, isAdminAuthenticated, async (req, res) => {
     try {
@@ -552,39 +613,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Update an exchange rate (admin and rate_editor)
-  app.patch(`${apiPrefix}/admin/exchange-rates/:id`, requireRole(['admin', 'rate_editor']), async (req, res) => {
-    try {
-      const { id } = req.params;
-      const rateId = parseInt(id);
-      
-      if (isNaN(rateId)) {
-        return res.status(400).json({ message: 'Invalid rate ID' });
-      }
-      
-      // Update the exchange rate
-      const updateData = {
-        ...req.body,
-        lastUpdated: new Date(),
-      };
-      
-      await db.update(exchangeRates)
-        .set(updateData)
-        .where(eq(exchangeRates.id, rateId));
-      
-      const updatedRate = await db.query.exchangeRates.findFirst({
-        where: eq(exchangeRates.id, rateId),
-        with: {
-          provider: true
-        }
-      });
-      
-      return res.json(updatedRate);
-    } catch (error) {
-      console.error('Error updating exchange rate:', error);
-      return res.status(500).json({ message: 'Failed to update exchange rate' });
-    }
-  });
+
   
   // Create a new exchange rate (admin)
   app.post(`${apiPrefix}/admin/exchange-rates`, isAdminAuthenticated, async (req, res) => {
