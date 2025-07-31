@@ -59,6 +59,7 @@ export default function QuickUpdate() {
       const response = await axios.get(`/api/exchange-rates/sa/${selectedCurrency}`);
       return response.data.rates || [];
     },
+    enabled: !!selectedCurrency,
   });
 
   // Update rate mutation
@@ -74,7 +75,7 @@ export default function QuickUpdate() {
         title: "Rate updated successfully",
         description: "The exchange rate has been updated.",
       });
-      queryClient.invalidateQueries({ queryKey: ['/api/exchange-rates'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/exchange-rates', 'sa', selectedCurrency] });
       setEditingId(null);
     },
     onError: () => {
@@ -148,7 +149,11 @@ export default function QuickUpdate() {
           </div>
           <div className="min-w-[150px]">
             <Label htmlFor="currency">Currency</Label>
-            <Select value={selectedCurrency} onValueChange={setSelectedCurrency}>
+            <Select value={selectedCurrency} onValueChange={(value) => {
+              setSelectedCurrency(value);
+              // Clear search when currency changes
+              setSearchQuery('');
+            }}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
