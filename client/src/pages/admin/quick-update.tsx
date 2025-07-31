@@ -127,7 +127,7 @@ export default function QuickUpdate() {
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">Quick Rate Update</h1>
-            <p className="text-gray-600">Update exchange rates quickly</p>
+            <p className="text-gray-600">Update SAR → {selectedCurrency} exchange rates</p>
           </div>
           <Button onClick={() => refetch()} variant="outline" size="sm">
             <TrendingUp className="w-4 h-4 mr-2" />
@@ -206,7 +206,7 @@ export default function QuickUpdate() {
                       <div>
                         <h3 className="font-semibold">{rate.name}</h3>
                         <p className="text-sm text-gray-600">
-                          SAR → INR • {rate.type}
+                          SAR → {selectedCurrency} • {rate.type}
                         </p>
                       </div>
                     </div>
@@ -291,7 +291,7 @@ export default function QuickUpdate() {
         {filteredRates.length === 0 && !isLoading && (
           <Card>
             <CardContent className="text-center py-8">
-              <p className="text-gray-600">No rates found for the selected currency.</p>
+              <p className="text-gray-600">No rates found for {selectedCurrency}.</p>
             </CardContent>
           </Card>
         )}
