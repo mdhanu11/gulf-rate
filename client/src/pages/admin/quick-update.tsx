@@ -207,7 +207,7 @@ export default function QuickUpdate() {
                     <div className="flex items-center gap-3 flex-1">
                       <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center relative">
                         <img 
-                          src={rate.logo} 
+                          src={`${rate.logo}?v=${Date.now()}`} 
                           alt={rate.name}
                           className="w-8 h-8 object-contain rounded"
                           onError={(e) => {
